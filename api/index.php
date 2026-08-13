@@ -20,25 +20,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Ensure Indian Standard Time (IST) for Anti-Tamper Audit Logging
 date_default_timezone_set('Asia/Kolkata');
 
-// ── Database Credentials (Hostinger / cPanel / Remote) ──
+// ── Database Credentials (Hostinger Production) ──
 $dbHost = getenv('DB_HOST') ?: 'localhost';
-$dbName = getenv('DB_NAME') ?: 'newversion1-353034319494';
-$dbUser = getenv('DB_USER') ?: 'n1';
-$dbPass = getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: 'Charan@2004');
+$dbName = getenv('DB_NAME') ?: 'u110415653_cabuddy';
+$dbUser = getenv('DB_USER') ?: 'u110415653_admin2';
+$dbPass = getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: 'Charan@18042004');
 
 $pdo = null;
 
-// 1. Try primary configured host (e.g. localhost for Hostinger)
+// 1. Try primary configured host (localhost for Hostinger)
 try {
     $pdo = new PDO("mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_TIMEOUT => 3
+        PDO::ATTR_TIMEOUT => 4
     ]);
 } catch (Exception $e) {
-    // 2. Try remote StackCP host fallback
+    // 2. Try 127.0.0.1 fallback
     try {
-        $pdo = new PDO("mysql:host=sdb-66.hosting.stackcp.net;dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
+        $pdo = new PDO("mysql:host=127.0.0.1;dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_TIMEOUT => 3
