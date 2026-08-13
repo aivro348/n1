@@ -1,0 +1,56 @@
+{
+  "name": "CA Buddy — Enterprise Audit & Robot Vault",
+  "short_name": "CA Buddy",
+  "description": "Enterprise Multi-Role Audit, Concurrent Verification & Continuous Robot Vault Web Application",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0F172A",
+  "orientation": "any",
+  "scope": "/",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Super Admin Vault",
+      "short_name": "Admin Vault",
+      "description": "View all complaints and evidence files in Robot Vault",
+      "url": "/?role=SUPER_ADMIN",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Manager Portal",
+      "short_name": "Manager",
+      "description": "Assign work and manage audit team",
+      "url": "/?role=MANAGER",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Upload Audit Evidence",
+      "short_name": "Upload",
+      "description": "Upload PDF or image audit report",
+      "url": "/?role=USER",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Route all API sub-paths to the single index.php router
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /api/
+  
+  # Allow direct access to test_db.php
+  RewriteRule ^test_db\.php$ - [L]
+  
+  # Block config.php from web access
+  RewriteRule ^config\.php$ - [F,L]
+  
+  # Route everything else to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>

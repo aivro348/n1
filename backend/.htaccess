@@ -1,0 +1,47 @@
+# ==============================================================================
+# CA Buddy — Root .htaccess for Hostinger public_html/
+# Routes API requests to PHP backend, SPA routes to index.html
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Route /api/* to api/index.php
+  RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+  RewriteRule ^api$ api/index.php [QSA,L]
+
+  # 2. Block direct access to config and data files
+  RewriteRule ^api/config\.php$ - [F,L]
+  RewriteRule \.(sql|env|log)$ - [F,L]
+
+  # 3. Serve existing files/directories directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 4. SPA fallback — all other routes go to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# MIME Type Corrections
+<IfModule mod_mime.c>
+  AddType application/javascript js mjs
+  AddType text/css css
+  AddType application/json json
+  AddType image/svg+xml svg svgz
+  AddType image/png png
+  AddType image/jpeg jpg jpeg
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# Prevent directory listings
+Options -Indexes
