@@ -1,7 +1,9 @@
 -- ==============================================================================
--- CA Buddy Enterprise Audit System - MySQL Production Database Schema (cPanel)
--- Database: servobite_audit_db (or your cPanel database name)
+-- CA Buddy Enterprise Audit System - Clean Production Database Schema
+-- Database Target: StackCP / cPanel MySQL
 -- ==============================================================================
+
+USE `newversion1-353034319494`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -14,10 +16,13 @@ CREATE TABLE `users` (
   `id` VARCHAR(64) NOT NULL,
   `name` VARCHAR(191) NOT NULL,
   `email` VARCHAR(191) NOT NULL UNIQUE,
-  `password` VARCHAR(255) NOT NULL DEFAULT '1234567',
+  `password` VARCHAR(255) NOT NULL DEFAULT '12345678',
   `role` ENUM('SUPER_ADMIN', 'MANAGER', 'USER') NOT NULL DEFAULT 'USER',
   `role_title` VARCHAR(100) NOT NULL DEFAULT 'Field Auditor',
   `unit` VARCHAR(255) NOT NULL DEFAULT 'Procurement [Marketing Department]',
+  `student_reg_no` VARCHAR(100) NULL,
+  `phone` VARCHAR(100) NULL,
+  `sub_unit` VARCHAR(255) NULL,
   `managed_by` VARCHAR(64) NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -48,6 +53,8 @@ CREATE TABLE `attendance` (
   `server_verified` TINYINT(1) NOT NULL DEFAULT 1,
   `server_utc_iso` VARCHAR(50) NULL,
   `manager_remarks` TEXT NULL,
+  `logout_latitude` DOUBLE NULL,
+  `logout_longitude` DOUBLE NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `idx_att_user` (`user_id`),
@@ -57,7 +64,7 @@ CREATE TABLE `attendance` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 3. Table structure for `assignments`
+-- 3. Table structure for `assignments` (Manager Delegated Work Tasks)
 -- ------------------------------------------------------------------------------
 DROP TABLE IF EXISTS `assignments`;
 CREATE TABLE `assignments` (
@@ -78,7 +85,7 @@ CREATE TABLE `assignments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 4. Table structure for `complaints`
+-- 4. Table structure for `complaints` (Audit Observations & Vault Evidence)
 -- ------------------------------------------------------------------------------
 DROP TABLE IF EXISTS `complaints`;
 CREATE TABLE `complaints` (
@@ -110,40 +117,95 @@ CREATE TABLE `complaints` (
   INDEX `idx_cmp_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ------------------------------------------------------------------------------
+-- 5. Table structure for `daily_reports` (10-Parameter Login, Logout & GPS Coordinates)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `daily_reports`;
+CREATE TABLE `daily_reports` (
+  `id` VARCHAR(64) NOT NULL,
+  `user_id` VARCHAR(64) NULL,
+  `login_time` VARCHAR(50) NOT NULL,
+  `full_name` VARCHAR(191) NOT NULL,
+  `student_reg_no` VARCHAR(100) NOT NULL,
+  `unit_details` TEXT NOT NULL,
+  `sub_unit_details` VARCHAR(255) NULL,
+  `audit_work_type` TEXT NOT NULL,
+  `work_objective` TEXT NULL,
+  `vouchers_verified` TEXT NULL,
+  `target_to_achieve` TEXT NULL,
+  `ca_remarks` TEXT NULL,
+  `poc_name` VARCHAR(255) NULL,
+  `logout_time` VARCHAR(50) NULL,
+  `logout_remarks` TEXT NULL,
+  `objective_completed` TEXT NULL,
+  `escalations` TEXT NULL,
+  `work_description` TEXT NULL,
+  `status` VARCHAR(50) NOT NULL DEFAULT 'SUBMITTED',
+  `date` VARCHAR(50) NOT NULL,
+  `duration` VARCHAR(50) NULL,
+  `login_latitude` DOUBLE NULL,
+  `login_longitude` DOUBLE NULL,
+  `logout_latitude` DOUBLE NULL,
+  `logout_longitude` DOUBLE NULL,
+  `concluded_at` VARCHAR(50) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_dr_user` (`user_id`),
+  INDEX `idx_dr_date` (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 6. Table structure for `moms` (Minutes of Meeting)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `moms`;
+CREATE TABLE `moms` (
+  `id` VARCHAR(64) NOT NULL,
+  `meeting_title` VARCHAR(255) NOT NULL,
+  `meeting_type` VARCHAR(191) NOT NULL,
+  `date` VARCHAR(50) NOT NULL,
+  `time` VARCHAR(50) NOT NULL,
+  `organizer` VARCHAR(191) NOT NULL,
+  `location` VARCHAR(255) NULL,
+  `attendees` TEXT NULL,
+  `agenda` TEXT NULL,
+  `discussions` TEXT NULL,
+  `action_items` TEXT NULL,
+  `next_meeting` VARCHAR(255) NULL,
+  `author_id` VARCHAR(64) NULL,
+  `server_timestamp` VARCHAR(100) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_moms_author` (`author_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 7. Table structure for `tasks` (Personal & Audit Tasks)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `tasks`;
+CREATE TABLE `tasks` (
+  `id` VARCHAR(64) NOT NULL,
+  `task_title` VARCHAR(255) NOT NULL,
+  `priority` VARCHAR(50) NOT NULL DEFAULT 'Medium Priority',
+  `description` TEXT NULL,
+  `assigned_to` VARCHAR(191) NOT NULL,
+  `due_date` VARCHAR(50) NOT NULL,
+  `project` VARCHAR(191) NULL,
+  `category` VARCHAR(100) NOT NULL DEFAULT 'General',
+  `status` VARCHAR(50) NOT NULL DEFAULT 'IN_PROGRESS',
+  `created_by_id` VARCHAR(64) NULL,
+  `created_by_name` VARCHAR(191) NULL,
+  `server_timestamp` VARCHAR(100) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_tasks_assigned` (`assigned_to`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ==============================================================================
--- INITIAL SEED DATA (Ready-to-use Accounts & Evidence Records)
+-- INITIAL MASTER SUPER ADMIN ACCOUNT (Zero demo dummy records)
 -- ==============================================================================
 
--- 1. Insert Master Accounts
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `role_title`, `unit`, `managed_by`) VALUES
-('usr-1', 'Executive Super Admin', 'admin@eluc', '1234567', 'SUPER_ADMIN', 'Super Administrator', 'All Enterprise Units', NULL),
-('usr-2', 'Suresh N., Audit Manager', 'manager@eluc', '1234567', 'MANAGER', 'Department Audit Manager', 'Auctions', 'usr-1'),
-('usr-3', 'Ravi Teja, Field Auditor', 'auditor@eluc', '1234567', 'USER', 'Field Auditor', 'Auctions', 'usr-2'),
-('usr-4', 'Priya Sharma, ACA', 'priya@eluc', '1234567', 'USER', 'Junior Auditor', 'Auctions', 'usr-2'),
-('usr-5', 'Ananya Rao, Field Staff', 'ananya@eluc', '1234567', 'USER', 'Compliance Officer', 'Kalyanakatta', 'usr-1'),
-('usr-6', 'Vikram Mehta, Auditor', 'vikram@eluc', '1234567', 'USER', 'Field Auditor', 'Warehousing [Marketing Department]', 'usr-1')
-ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
-
--- 2. Insert Attendance Logs
-INSERT INTO `attendance` (`id`, `user_id`, `user_name`, `user_email`, `manager_id`, `role_title`, `unit`, `login_time`, `logout_time`, `date_str`, `time_window`, `duration`, `is_active`, `server_verified`, `manager_remarks`) VALUES
-('log-1', 'usr-3', 'Ravi Teja, Field Auditor', 'auditor@eluc', 'usr-2', 'Field Auditor', 'Auctions', '09:02:14 AM', NULL, '12-Aug-2026', '09:02 AM - Active', '4h 45m', 1, 1, 'Verified on-site token inventory.'),
-('log-2', 'usr-4', 'Priya Sharma, ACA', 'priya@eluc', 'usr-2', 'Junior Auditor', 'Auctions', '08:45:00 AM', '04:30:00 PM', '12-Aug-2026', '08:45 AM - 04:30 PM', '7h 45m', 0, 1, 'Audit physical tokens matched voucher book.'),
-('log-3', 'usr-5', 'Ananya Rao, Field Staff', 'ananya@eluc', 'usr-1', 'Compliance Officer', 'Kalyanakatta', '09:15:30 AM', NULL, '12-Aug-2026', '09:15 AM - Active', '4h 32m', 1, 1, 'Routine queue compliance verified.'),
-('log-4', 'usr-6', 'Vikram Mehta, Auditor', 'vikram@eluc', 'usr-1', 'Field Auditor', 'Warehousing [Marketing Department]', '08:30:00 AM', '05:00:00 PM', '12-Aug-2026', '08:30 AM - 05:00 PM', '8h 30m', 0, 1, 'Completed stock ledger reconciliation.'),
-('log-5', 'usr-2', 'Suresh N., Audit Manager', 'manager@eluc', 'usr-1', 'Department Audit Manager', 'Auctions', '08:50:00 AM', NULL, '12-Aug-2026', '08:50 AM - Active', '4h 55m', 1, 1, 'Manager shift active.')
-ON DUPLICATE KEY UPDATE `user_name`=VALUES(`user_name`);
-
--- 3. Insert Work Assignments
-INSERT INTO `assignments` (`id`, `assigned_to_id`, `assigned_to_name`, `manager_id`, `manager_name`, `unit`, `task_title`, `instructions`, `deadline`, `status`) VALUES
-('asn-1', 'usr-3', 'Ravi Teja, Field Auditor', 'usr-2', 'Suresh N., Audit Manager', 'Auctions', 'Concurrent Physical Bid Token Audit', 'Cross-check day-end auction sheet against cash counter collection ledger and upload token report PDF.', 'Today, 05:00 PM', 'IN_PROGRESS'),
-('asn-2', 'usr-4', 'Priya Sharma, ACA', 'usr-2', 'Suresh N., Audit Manager', 'Auctions', 'Voucher Book & E-Token Verification', 'Upload scanned voucher summary PDF or photo with day collection total.', 'Today, 04:30 PM', 'COMPLETED')
-ON DUPLICATE KEY UPDATE `task_title`=VALUES(`task_title`);
-
--- 4. Insert Complaints & Evidence Files
-INSERT INTO `complaints` (`id`, `unit`, `title`, `category`, `urgency`, `remarks`, `file_name`, `file_type`, `file_size`, `sample_file_url`, `auditor_id`, `auditor_name`, `manager_id`, `manager_name`, `date_str`, `time_frame`, `server_timestamp`, `status`, `robot_verified`) VALUES
-('CMP-2026-0812-001', 'Auctions', 'Cash Collection & Token Reconciliation', 'Cash Collection & Token Reconciliation', 'HIGH', 'Scanned voucher sheets show 3 extra tokens unrecorded in the electronic terminal.', 'token_discrepancy_evidence.pdf', 'application/pdf', '412 KB', 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', 'usr-3', 'Ravi Teja, Field Auditor', 'usr-2', 'Suresh N., Audit Manager', '12-Aug-2026', '09:02:00 AM - 10:15:00 AM (UTC+5:30)', '10:15:00 AM • 12-Aug-2026', 'UNDER_REVIEW', 1),
-('CMP-2026-0812-002', 'Procurement [Marketing Department]', 'Tender Compliance & Vendor Billing Irregularity', 'Tender Compliance & Vendor Billing Irregularity', 'CRITICAL', 'Photographic evidence attached showing broken paper seal on bidder envelope #12.', 'seal_breach_photo.png', 'image/png', '1.2 MB', 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&auto=format&fit=crop&q=80', 'usr-7', 'Kiran Reddy, Lead Auditor', 'usr-1', 'Executive Admin', '12-Aug-2026', '09:30:00 AM - 11:45:00 AM (UTC+5:30)', '11:45:00 AM • 12-Aug-2026', 'ESCALATED', 1),
-('CMP-2026-0812-003', 'Annaprasadam Trust and Canteens TML & TPT', 'Others (Manual Specification)', 'Others (Manual Specification)', 'HIGH', 'Digital thermograph report attached verifying +8°C temperature lag over 3 hours.', 'temperature_log_sheet.pdf', 'application/pdf', '298 KB', 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', 'usr-9', 'Manoj Varma, Inspector', 'usr-1', 'Canteen Directorate', '12-Aug-2026', '07:30:00 AM - 09:45:00 AM (UTC+5:30)', '09:45:00 AM • 12-Aug-2026', 'RESOLVED', 1)
-ON DUPLICATE KEY UPDATE `title`=VALUES(`title`);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `role_title`, `unit`, `student_reg_no`, `phone`, `sub_unit`, `managed_by`) VALUES
+('usr-admin-1', 'System Administrator', 'cabuddy@gmail.com', '12345678', 'SUPER_ADMIN', 'Super Administrator', 'All Enterprise Units', 'FCA001', '+91 99999 99999', 'Central Administration Desk', NULL)
+ON DUPLICATE KEY UPDATE `password`=VALUES(`password`), `role`=VALUES(`role`), `name`=VALUES(`name`);
 
 SET FOREIGN_KEY_CHECKS = 1;

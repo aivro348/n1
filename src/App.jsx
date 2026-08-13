@@ -9,12 +9,12 @@ const API_BASE = '/api';
 const ORGANIZATIONAL_UNITS = [
   'Procurement [Marketing Department]',
   'Warehousing [Marketing Department]',
-  'Donor cell along with Concurrent audit on donation of all allied trusts and Srivani Trust Receipts [Tirumali]',
-  'Kalyanakatta',
+  'Donor cell along with Concurrent audit on donation of all allied trusts and Srivani Trust Receipts [Tirumala]',
+  'Kalyanakatta & Kalyanavedika [Tirumala]',
   'Annaprasadam Trust and Canteens TML & TPT',
   'Sri Padmavathi Ammavari Temple, Tiruchanoor (Sri PAT)',
   'Reception, TML including Marriage halls',
-  'Auctions'
+  'Auctions [Marketing Department]'
 ];
 
 // Available Auditor Staff Roles (Manager Decides)
@@ -51,9 +51,9 @@ export default function App() {
   const [dutyLoginTime, setDutyLoginTime] = useState('09:00:00 AM');
   const [dutyFullName, setDutyFullName] = useState('');
   const [dutyStudentRegNo, setDutyStudentRegNo] = useState('');
-  const [dutyUnitDetails, setDutyUnitDetails] = useState(ORGANIZATIONAL_UNITS[0]);
+  const [dutyUnitDetails, setDutyUnitDetails] = useState([ORGANIZATIONAL_UNITS[0]]);
   const [dutySubUnitDetails, setDutySubUnitDetails] = useState('');
-  const [dutyAuditWorkType, setDutyAuditWorkType] = useState(AUDIT_WORK_TYPES[0]);
+  const [dutyAuditWorkType, setDutyAuditWorkType] = useState([AUDIT_WORK_TYPES[0]]);
   const [dutyWorkObjective, setDutyWorkObjective] = useState('');
   const [dutyTargetToAchieve, setDutyTargetToAchieve] = useState('');
   const [dutyCaRemarks, setDutyCaRemarks] = useState('');
@@ -63,27 +63,25 @@ export default function App() {
   const [dutyVouchersVerified, setDutyVouchersVerified] = useState('');
   const [dutyActiveTab, setDutyActiveTab] = useState('sheet'); // 'sheet', 'records', 'all_users', 'all_reports', 'all_attendance', 'moms', 'tasks'
 
-  // ── Hub Active Section State ('entry' | 'logout' | 'moms' | 'tasks' | 'all_users') ──
-  const [hubActiveSection, setHubActiveSection] = useState('entry');
 
   // ── Dashboard Page View State ('hub' | 'duty_entry' | 'shift_logout' | 'mom_page' | 'task_page') ──
   const [dashboardView, setDashboardView] = useState('hub');
 
-  // Sign In form inputs (admin / admin or any user details)
-  const [loginEmail, setLoginEmail] = useState('admin');
-  const [loginPassword, setLoginPassword] = useState('admin');
+  // Sign In form inputs (Master Admin cabuddy@gmail.com / 12345678)
+  const [loginEmail, setLoginEmail] = useState('cabuddy@gmail.com');
+  const [loginPassword, setLoginPassword] = useState('12345678');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // ── MOM (Minutes of Meeting) Modal State (Matching Images 1, 2, 3) ──
+  // ── MOM (Minutes of Meeting) Modal State ──
   const [showMomDialog, setShowMomDialog] = useState(false);
   const [momActiveSubTab, setMomActiveSubTab] = useState('basic'); // 'basic' | 'content' | 'actions'
-  const [momMeetingTitle, setMomMeetingTitle] = useState('Weekly Team Meeting');
+  const [momMeetingTitle, setMomMeetingTitle] = useState('');
   const [momMeetingType, setMomMeetingType] = useState('Team Meeting');
-  const [momDate, setMomDate] = useState('12/08/2026');
-  const [momTime, setMomTime] = useState('10:30 AM');
-  const [momOrganizer, setMomOrganizer] = useState('Demo Managing Partner');
-  const [momLocation, setMomLocation] = useState('Conference Room A, Zoo Road');
+  const [momDate, setMomDate] = useState('');
+  const [momTime, setMomTime] = useState('');
+  const [momOrganizer, setMomOrganizer] = useState('');
+  const [momLocation, setMomLocation] = useState('');
   const [momAttendees, setMomAttendees] = useState('');
   const [momAgenda, setMomAgenda] = useState('');
   const [momDiscussions, setMomDiscussions] = useState('');
@@ -92,12 +90,12 @@ export default function App() {
   const [momsList, setMomsList] = useState([]);
   const [momSuccessToast, setMomSuccessToast] = useState(false);
 
-  // ── Create New Task Modal State (Matching Image 4) ──
+  // ── Create New Task Modal State ──
   const [showTaskDialog, setShowTaskDialog] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskPriority, setNewTaskPriority] = useState('Medium Priority');
   const [newTaskDescription, setNewTaskDescription] = useState('');
-  const [newTaskAssignedTo, setNewTaskAssignedTo] = useState('Demo Managing Partner');
+  const [newTaskAssignedTo, setNewTaskAssignedTo] = useState('');
   const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [newTaskProject, setNewTaskProject] = useState('');
   const [newTaskCategory, setNewTaskCategory] = useState('General');
@@ -147,6 +145,22 @@ export default function App() {
   const [newUserPassword, setNewUserPassword] = useState('1234567');
   const [newUserRoleTitle, setNewUserRoleTitle] = useState('Field Auditor');
   const [newUserUnit, setNewUserUnit] = useState(ORGANIZATIONAL_UNITS[0]);
+  const [newUserSubUnit, setNewUserSubUnit] = useState('');
+  const [newUserStudentRegNo, setNewUserStudentRegNo] = useState('');
+  const [newUserPhone, setNewUserPhone] = useState('');
+
+  // ── Edit User Modal State ──
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editUserName, setEditUserName] = useState('');
+  const [editUserEmail, setEditUserEmail] = useState('');
+  const [editUserPassword, setEditUserPassword] = useState('');
+  const [editUserRole, setEditUserRole] = useState('USER');
+  const [editUserRoleTitle, setEditUserRoleTitle] = useState('Field Auditor');
+  const [editUserUnit, setEditUserUnit] = useState(ORGANIZATIONAL_UNITS[0]);
+  const [editUserSubUnit, setEditUserSubUnit] = useState('');
+  const [editUserStudentRegNo, setEditUserStudentRegNo] = useState('');
+  const [editUserPhone, setEditUserPhone] = useState('');
 
   // Forgot Password Modal
 
@@ -154,11 +168,31 @@ export default function App() {
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoverySuccess, setRecoverySuccess] = useState(false);
 
+  // ── Logout Questionnaire State ──
+  const [logoutFullName, setLogoutFullName] = useState('');
+  const [logoutStudentRegNo, setLogoutStudentRegNo] = useState('');
+  const [logoutUnitDetails, setLogoutUnitDetails] = useState('');
+  const [logoutSubUnitDetails, setLogoutSubUnitDetails] = useState('');
+  const [logoutAuditWorkType, setLogoutAuditWorkType] = useState('Monthly Internal Audit');
+  const [logoutObjectiveCompleted, setLogoutObjectiveCompleted] = useState('');
+  const [logoutEscalations, setLogoutEscalations] = useState('');
+  const [logoutWorkDescription, setLogoutWorkDescription] = useState('');
+
+  // ── Submission State & Database Handling ──
+  const [isSubmittingDuty, setIsSubmittingDuty] = useState(false);
+  const [dutySubmitError, setDutySubmitError] = useState('');
+  const [hasSubmittedDutyToday, setHasSubmittedDutyToday] = useState(false);
+  const [isSubmittingLogout, setIsSubmittingLogout] = useState(false);
+  const [logoutSubmitError, setLogoutSubmitError] = useState('');
+
+  // ── Custom Dropdown Dropdown Open States ──
+  const [isDutyUnitDropdownOpen, setIsDutyUnitDropdownOpen] = useState(false);
+  const [isDutyWorkTypeDropdownOpen, setIsDutyWorkTypeDropdownOpen] = useState(false);
+
   // ── Universal In-App Mobile Unit Picker Modal (Fixes OS Dropdown Overflows) ──
   const [unitPickerModal, setUnitPickerModal] = useState(null);
 
-  // ── Right Bottom Corner Widget State & 4-Sections Modals ──
-  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+  // ── Modals & Dialogs State ──
   const [showQuickLoginModal, setShowQuickLoginModal] = useState(false);
   const [showMumModal, setShowMumModal] = useState(false);
   const [mumTab, setMumTab] = useState('units_matrix'); // 'units_matrix', 'log_minutes', 'records'
@@ -302,41 +336,24 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Quick Demo Role Switcher
+  // Master Admin Role Quick Selector
   const handleSelectDemoRole = (roleKey) => {
-    if (roleKey === 'SUPER_ADMIN') {
-      setLoginEmail('admin@eluc');
-      setLoginPassword('1234567');
-    } else if (roleKey === 'MANAGER') {
-      setLoginEmail('manager@eluc');
-      setLoginPassword('1234567');
-    } else {
-      setLoginEmail('auditor@eluc');
-      setLoginPassword('1234567');
-    }
+    setLoginEmail('cabuddy@gmail.com');
+    setLoginPassword('12345678');
   };
 
   // Instant 1-Click Login from Quick Login Widget / Modal
   const handleQuickLoginRole = async (roleKey) => {
-    handleSelectDemoRole(roleKey);
-    let targetEmail = 'admin@eluc';
-    let targetPwd = '1234567';
-    if (roleKey === 'MANAGER') {
-      targetEmail = 'manager@eluc';
-      targetPwd = '1234567';
-    } else if (roleKey === 'USER') {
-      targetEmail = 'auditor@eluc';
-      targetPwd = '1234567';
-    }
-    setLoginEmail(targetEmail);
-    setLoginPassword(targetPwd);
+    setLoginEmail('cabuddy@gmail.com');
+    setLoginPassword('12345678');
     setShowQuickLoginModal(false);
 
     try {
+      const location = await getGpsLocation();
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: targetEmail, password: targetPwd })
+        body: JSON.stringify({ email: 'cabuddy@gmail.com', password: '12345678', location })
       });
       const data = await res.json();
 
@@ -352,11 +369,11 @@ export default function App() {
         refreshAllData();
       }
     } catch (err) {
-      console.error('Quick login error:', err);
+      console.error('Master admin quick login error:', err);
     }
   };
 
-  // Helper: Capture GPS Location with High Accuracy (enableHighAccuracy tries for < 5m accuracy)
+  // Helper: High-Precision GPS Location Capture (95% Accuracy / ~5m resolution)
   const getGpsLocation = () => {
     return new Promise((resolve) => {
       if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -366,18 +383,28 @@ export default function App() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy
+            latitude: Number(position.coords.latitude.toFixed(7)),
+            longitude: Number(position.coords.longitude.toFixed(7)),
+            accuracy: position.coords.accuracy ? Number(position.coords.accuracy.toFixed(1)) : null
           });
         },
         (error) => {
-          console.warn('GPS location capture warning:', error.message);
-          resolve(null);
+          console.warn('GPS location high-accuracy notice:', error.message);
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              resolve({
+                latitude: Number(pos.coords.latitude.toFixed(7)),
+                longitude: Number(pos.coords.longitude.toFixed(7)),
+                accuracy: pos.coords.accuracy ? Number(pos.coords.accuracy.toFixed(1)) : null
+              });
+            },
+            () => resolve(null),
+            { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
+          );
         },
         {
           enableHighAccuracy: true,
-          timeout: 8000,
+          timeout: 10000,
           maximumAge: 0
         }
       );
@@ -426,59 +453,143 @@ export default function App() {
   };
 
   // 2. Backend Logout (Records Server Authoritative Exit Timestamp & Concludes Single Daily Sheet)
-  const handleLogout = async () => {
+  const handleLogout = async (e, isImmediate = false) => {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const bypassValidation = isImmediate || currentUser?.role === 'SUPER_ADMIN';
+
+    if (!bypassValidation) {
+      if (!logoutFullName.trim()) {
+        alert("Please fill in your Full Name before logging out.");
+        return;
+      }
+      if (!logoutStudentRegNo.trim()) {
+        alert("Please fill in your Student Registration Number.");
+        return;
+      }
+      if (!logoutUnitDetails || !logoutUnitDetails.trim()) {
+        alert("Please select a TTD Audit Unit attended today.");
+        return;
+      }
+      if (!logoutAuditWorkType || !logoutAuditWorkType.trim()) {
+        alert("Please select a Type of Audit Work performed.");
+        return;
+      }
+      if (!logoutObjectiveCompleted.trim()) {
+        alert("Please describe how much of the objective has been completed.");
+        return;
+      }
+      if (!logoutWorkDescription.trim()) {
+        alert("Please enter the Description of the work done today.");
+        return;
+      }
+    }
+
+    setIsSubmittingLogout(true);
+    setLogoutSubmitError('');
+
     let recordedTime = currentTimeStr;
     const location = await getGpsLocation();
+    
     try {
       if (currentUser) {
+        const payload = {
+          userId: currentUser.id,
+          logoutRemarks: logoutRemarks.trim(),
+          location
+        };
+
+        if (!bypassValidation) {
+          Object.assign(payload, {
+            logoutFullName: logoutFullName.trim(),
+            logoutStudentRegNo: logoutStudentRegNo.trim(),
+            logoutUnitDetails: logoutUnitDetails.trim(),
+            logoutSubUnitDetails: logoutSubUnitDetails.trim(),
+            logoutAuditWorkType: logoutAuditWorkType.trim(),
+            logoutObjectiveCompleted: logoutObjectiveCompleted.trim(),
+            logoutEscalations: logoutEscalations.trim(),
+            logoutWorkDescription: logoutWorkDescription.trim()
+          });
+        } else {
+          Object.assign(payload, {
+            logoutRemarks: logoutRemarks.trim() || 'Super Admin direct logout'
+          });
+        }
+
         const res = await fetch(`${API_BASE}/auth/logout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            userId: currentUser.id,
-            logoutRemarks: logoutRemarks.trim(),
-            location
-          })
+          body: JSON.stringify(payload)
         });
+        if (!res.ok) {
+          throw new Error("Server database connection error");
+        }
         const data = await res.json();
         if (data.success) {
           recordedTime = data.serverLogoutTime;
           if (data.reports) setDutySubmittedReports(data.reports);
           if (data.attendance) setAttendanceLedger(data.attendance);
+        } else {
+          throw new Error(data.message || "Failed to conclude shift on database");
         }
       }
+
+      // Show Brief Server Stamped Confirmation Toast
+      setLogoutToast({
+        time: recordedTime,
+        userName: currentUser?.name || 'User'
+      });
+
+      setTimeout(() => {
+        setLogoutToast(null);
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+        setSessionLoginTime(null);
+        setHasSubmittedDutyToday(false);
+        setDutySubmitSuccess(false);
+        setDutySubmitError('');
+        setLogoutSubmitError('');
+        setAuthView('signin');
+        refreshAllData();
+      }, 1200);
+
     } catch (err) {
       console.error('Logout error:', err);
+      setLogoutSubmitError('Central Database Connection Failed on Logout. Please verify connectivity and retry.');
+    } finally {
+      setIsSubmittingLogout(false);
     }
-
-    // Show Brief Server Stamped Confirmation Toast
-    setIsWidgetOpen(false);
-    setLogoutToast({
-      time: recordedTime,
-      userName: currentUser?.name || 'User'
-    });
-
-
-    setTimeout(() => {
-      setLogoutToast(null);
-      setIsLoggedIn(false);
-      setCurrentUser(null);
-      setSessionLoginTime(null);
-      setAuthView('signin');
-      refreshAllData();
-    }, 1200);
   };
 
   // ── Auto-Populate Duty Parameters on Login ──
   useEffect(() => {
     if (currentUser) {
-      setDutyFullName(currentUser.name || 'Audit Articled Assistant');
-      setDutyStudentRegNo(currentUser.studentRegNo || 'SRO' + Math.floor(100000 + Math.random() * 900000));
+      const defaultName = currentUser.name || 'Audit Articled Assistant';
+      const defaultRegNo = currentUser.studentRegNo || 'SRO' + Math.floor(100000 + Math.random() * 900000);
+      
+      setDutyFullName(defaultName);
+      setDutyStudentRegNo(defaultRegNo);
+      setLogoutFullName(defaultName);
+      setLogoutStudentRegNo(defaultRegNo);
+
       if (currentUser.unit && currentUser.unit !== 'All Enterprise Units') {
-        setDutyUnitDetails(currentUser.unit);
+        const parsedUnits = typeof currentUser.unit === 'string'
+          ? currentUser.unit.split(',').map(u => u.trim()).filter(Boolean)
+          : [currentUser.unit];
+        setDutyUnitDetails(parsedUnits);
+        setLogoutUnitDetails(currentUser.unit);
+      } else {
+        setDutyUnitDetails([ORGANIZATIONAL_UNITS[0]]);
+        setLogoutUnitDetails(ORGANIZATIONAL_UNITS[0]);
       }
-      setMomOrganizer(currentUser.name || 'Demo Managing Partner');
-      setNewTaskAssignedTo(currentUser.name || 'Demo Managing Partner');
+      
+      if (currentUser.subUnit) {
+        setDutySubUnitDetails(currentUser.subUnit);
+        setLogoutSubUnitDetails(currentUser.subUnit);
+      }
+
+      setMomOrganizer(defaultName);
+      setNewTaskAssignedTo(defaultName);
     }
     if (sessionLoginTime) {
       setDutyLoginTime(sessionLoginTime);
@@ -487,22 +598,75 @@ export default function App() {
     }
   }, [currentUser, sessionLoginTime, currentTimeStr]);
 
+  useEffect(() => {
+    if (currentUser && dutySubmittedReports.length > 0) {
+      const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      // Only lock the entry sheet if there is an active/submitted report for the current session (not yet concluded/logged out)
+      const activeReportSubmitted = dutySubmittedReports.some(r => 
+        (r.userId === currentUser.id || (r.studentRegNo && currentUser.studentRegNo && r.studentRegNo === currentUser.studentRegNo)) && 
+        r.date === todayStr && 
+        (r.status === 'SUBMITTED' || r.status === 'ACTIVE_DUTY')
+      );
+      setHasSubmittedDutyToday(activeReportSubmitted);
+    } else {
+      setHasSubmittedDutyToday(false);
+    }
+  }, [currentUser, dutySubmittedReports]);
+
+  // Click outside to close custom dropdowns
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.custom-dropdown-container')) {
+        setIsDutyUnitDropdownOpen(false);
+        setIsDutyWorkTypeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   // ── Submit Daily Audit Duty Entry (10 Parameters - Login Time Auto Captured) ──
   const handleSaveDutyReport = async (shouldLogout = false) => {
+    const selectedUnits = Array.isArray(dutyUnitDetails)
+      ? dutyUnitDetails.filter(Boolean)
+      : dutyUnitDetails ? [dutyUnitDetails] : [];
+
+    const selectedWorkTypes = Array.isArray(dutyAuditWorkType)
+      ? dutyAuditWorkType.filter(Boolean)
+      : dutyAuditWorkType ? [dutyAuditWorkType] : [];
+
+    if (selectedUnits.length === 0) {
+      alert("Please select at least one TTD Audit Unit attending today.");
+      return;
+    }
+    if (selectedWorkTypes.length === 0) {
+      alert("Please select at least one Type of Audit Work.");
+      return;
+    }
+
+    setIsSubmittingDuty(true);
+    setDutySubmitError('');
+
+    const location = await getGpsLocation();
+
     const payload = {
       userId: currentUser?.id,
       loginTime: dutyLoginTime || currentTimeStr,
       fullName: dutyFullName.trim() || currentUser?.name || 'Audit Student',
       studentRegNo: dutyStudentRegNo.trim() || 'SRO0684920',
-      unitDetails: dutyUnitDetails,
+      unitDetails: selectedUnits.join(', '),
       subUnitDetails: dutySubUnitDetails.trim() || 'General Unit Counter',
-      auditWorkType: dutyAuditWorkType,
+      auditWorkType: selectedWorkTypes.join(', '),
       workObjective: dutyWorkObjective.trim(),
       vouchersVerified: dutyVouchersVerified,
       targetToAchieve: dutyTargetToAchieve.trim(),
       caRemarks: dutyCaRemarks.trim(),
       pocName: dutyPocName.trim(),
       logoutTime: shouldLogout ? currentTimeStr : null,
+      loginLatitude: location ? location.latitude : null,
+      loginLongitude: location ? location.longitude : null,
       status: shouldLogout ? 'COMPLETED & LOGGED OUT' : 'SUBMITTED'
     };
 
@@ -512,27 +676,32 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      if (!res.ok) {
+        throw new Error("Server database connection error");
+      }
       const data = await res.json();
       if (data.success && data.reports) {
         setDutySubmittedReports(data.reports);
+        setDutySubmitSuccess(true);
+        setHasSubmittedDutyToday(true);
+        
+        if (shouldLogout) {
+          setTimeout(() => {
+            handleLogout(null, true);
+          }, 1200);
+        } else {
+          setTimeout(() => {
+            setDutySubmitSuccess(false);
+          }, 3500);
+        }
       } else {
-        setDutySubmittedReports(prev => [payload, ...prev]);
+        throw new Error(data.message || "Failed to save daily report on database");
       }
     } catch (err) {
-      console.warn('Save daily report local fallback:', err);
-      setDutySubmittedReports(prev => [payload, ...prev]);
-    }
-
-    setDutySubmitSuccess(true);
-
-    if (shouldLogout) {
-      setTimeout(() => {
-        handleLogout();
-      }, 1200);
-    } else {
-      setTimeout(() => {
-        setDutySubmitSuccess(false);
-      }, 3500);
+      console.error('Save daily report database error:', err);
+      setDutySubmitError('Central Database Connection Failed. Please ensure the backend server is online and retry.');
+    } finally {
+      setIsSubmittingDuty(false);
     }
   };
 
@@ -719,13 +888,11 @@ export default function App() {
 
   // Provision New User
   const handleCreateUser = async (e) => {
-
     e.preventDefault();
     if (!newUserName || !newUserEmail) return;
 
     try {
       const res = await fetch(`${API_BASE}/users`, {
-
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -734,6 +901,9 @@ export default function App() {
           password: newUserPassword || '1234567',
           roleTitle: newUserRoleTitle,
           unit: newUserUnit,
+          subUnit: newUserSubUnit.trim(),
+          studentRegNo: newUserStudentRegNo.trim(),
+          phone: newUserPhone.trim(),
           managerId: currentUser?.role === 'MANAGER' ? currentUser.id : 'usr-1'
         })
       });
@@ -742,10 +912,85 @@ export default function App() {
         setShowCreateUserModal(false);
         setNewUserName('');
         setNewUserEmail('');
+        setNewUserPassword('1234567');
+        setNewUserRoleTitle('Field Auditor');
+        setNewUserUnit(ORGANIZATIONAL_UNITS[0]);
+        setNewUserSubUnit('');
+        setNewUserStudentRegNo('');
+        setNewUserPhone('');
         refreshAllData();
       }
     } catch (err) {
       console.error('User create error:', err);
+    }
+  };
+
+  const openEditUserModal = (user) => {
+    setEditingUser(user);
+    setEditUserName(user.name || '');
+    setEditUserEmail(user.email || '');
+    setEditUserPassword(user.password || '1234567');
+    setEditUserRole(user.role || 'USER');
+    setEditUserRoleTitle(user.roleTitle || 'Field Auditor');
+    setEditUserUnit(user.unit || ORGANIZATIONAL_UNITS[0]);
+    setEditUserSubUnit(user.subUnit || '');
+    setEditUserStudentRegNo(user.studentRegNo || '');
+    setEditUserPhone(user.phone || '');
+    setShowEditUserModal(true);
+  };
+
+  // Edit User
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    if (!editingUser || !editUserName || !editUserEmail) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/users/${editingUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editUserName.trim(),
+          email: editUserEmail.trim().toLowerCase(),
+          password: editUserPassword || '1234567',
+          role: editUserRole,
+          roleTitle: editUserRoleTitle,
+          unit: editUserUnit,
+          subUnit: editUserSubUnit.trim(),
+          studentRegNo: editUserStudentRegNo.trim(),
+          phone: editUserPhone.trim()
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShowEditUserModal(false);
+        setEditingUser(null);
+        refreshAllData();
+      }
+    } catch (err) {
+      console.error('User update error:', err);
+    }
+  };
+
+  // Delete User
+  const handleDeleteUser = async (userToDelete) => {
+    if (!userToDelete) return;
+    if (userToDelete.id === currentUser?.id) {
+      alert("Security Violation: You cannot delete your own currently active administrator session.");
+      return;
+    }
+    const confirmDelete = window.confirm(`Are you absolutely sure you want to permanently delete the user account for "${userToDelete.name}" (${userToDelete.email})? This action cannot be undone.`);
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/users/${userToDelete.id}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (data.success) {
+        refreshAllData();
+      }
+    } catch (err) {
+      console.error('User delete error:', err);
     }
   };
 
@@ -757,15 +1002,12 @@ export default function App() {
       <header className="webapp-navbar">
         <div className="webapp-navbar-inner">
           <div className="webapp-brand-left">
-            <div className="brand-emblem-mini">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2v4M4.93 10.93a7 7 0 1 0 9.9 0L12 8l-2.83 2.93z" />
-                <path d="M9 18h6M10 22h4" />
-              </svg>
+            <div className="brand-logo-wrapper-nav">
+              <img src="/calogo.png" alt="CA Buddy Logo" className="brand-logo-img-nav" />
             </div>
             <div className="brand-name-group">
               <span className="brand-title">CA Buddy</span>
-              <span className="brand-sub">Enterprise Audit & Robot Vault</span>
+              <span className="brand-quote-nav">“Consistent. Collaborative.”</span>
             </div>
           </div>
 
@@ -799,7 +1041,7 @@ export default function App() {
 
                 <button 
                   className="dash-logout-corner" 
-                  onClick={handleLogout}
+                  onClick={(e) => handleLogout(e, true)}
                   title="End Session & Record Logout Timestamp"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -823,12 +1065,13 @@ export default function App() {
                ── SIGN IN SCREEN (CENTERED WEB APP CARD) ──
                ═══════════════════════════════════════════════════════ */
             <div className="webapp-auth-center">
-              <div className="brand-top-header" style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-                <img 
-                  src="/calogo.png" 
-                  alt="CA Buddy Logo" 
-                  style={{ width: '80px', height: '80px', objectFit: 'contain', display: 'block', margin: '0 auto' }} 
-                />
+              <div className="brand-top-header">
+                <div className="brand-logo-hero-container">
+                  <img src="/calogo.png" alt="CA Buddy Logo" className="brand-logo-hero" />
+                </div>
+                <h2 className="brand-company-title">CA BUDDY</h2>
+                <p className="brand-company-quotation">“Consistent. Collaborative.”</p>
+                <div className="brand-quote-badge">Enterprise Audit &amp; Robot Vault</div>
               </div>
 
 
@@ -943,86 +1186,88 @@ export default function App() {
                 {/* ═══════════════════════════════════════════════════════
                    ── 4 ACTION HUB BOXES (LOGIN ENTRY, LOGOUT, MOM, TASK) ──
                    ═══════════════════════════════════════════════════════ */}
-                <div className="hub-four-grid">
-                  
-                  {/* Box 1: Login Entry */}
-                  <div 
-                    className="hub-box-card box-entry"
-                    onClick={() => {
-                      setDashboardView('duty_entry');
-                      setDutyActiveTab('sheet');
-                      setHubActiveSection('entry');
-                    }}
-                  >
-                    <div className="hub-box-top">
-                      <div className="hub-box-icon" style={{ background: '#ECFDF5', color: '#047857' }}>📝</div>
-                      <span className="hub-box-badge" style={{ background: '#ECFDF5', color: '#047857' }}>10 PARAMS</span>
-                    </div>
-                    <h4>1. Daily Duty Login Entry</h4>
-                    <p>Auto-captures server timestamp & submit 10-parameter daily audit questionnaire.</p>
-                    <button type="button" className="hub-box-action-btn">
-                      <span>📝 File Duty Entry →</span>
-                    </button>
-                  </div>
+                 {currentUser?.role !== 'SUPER_ADMIN' && (
+                  <div className="hub-four-grid">
+                    
+                    {/* Box 1: Login Entry */}
+                    <div 
+                      className="hub-box-card box-entry"
+                      onClick={() => {
+                        setDashboardView('duty_entry');
+                        setDutyActiveTab('sheet');
+                        setHubActiveSection('entry');
+                      }}
+                    >
+                      <div className="hub-box-top">
+                        <div className="hub-box-icon" style={{ background: '#ECFDF5', color: '#047857' }}>📝</div>
 
-                  {/* Box 2: Shift Logout Section */}
-                  <div 
-                    className="hub-box-card box-logout"
-                    onClick={() => {
-                      setDashboardView('shift_logout');
-                    }}
-                  >
-                    <div className="hub-box-top">
-                      <div className="hub-box-icon" style={{ background: '#FEF2F2', color: '#DC2626' }}>🔒</div>
-                      <span className="hub-box-badge" style={{ background: '#FEF2F2', color: '#DC2626' }}>SHIFT LOGOUT</span>
+                      </div>
+                      <h4>1. Daily Duty Login Entry</h4>
+                      <p>Auto-captures server timestamp & submit 10-parameter daily audit questionnaire.</p>
+                      <button type="button" className="hub-box-action-btn">
+                        <span>📝 File Duty Entry →</span>
+                      </button>
                     </div>
-                    <h4>2. Shift Logout Section</h4>
-                    <p>Conclude daily shift, record verified server exit timestamp, and save day summary.</p>
-                    <button type="button" className="hub-box-action-btn">
-                      <span>⏱️ Shift Logout →</span>
-                    </button>
-                  </div>
 
-                  {/* Box 3: Minutes of Meeting (MOM) */}
-                  <div 
-                    className="hub-box-card box-mom"
-                    onClick={() => {
-                      setMomOrganizer(currentUser?.name || 'Demo Managing Partner');
-                      setMomActiveSubTab('basic');
-                      setDashboardView('mom_page');
-                    }}
-                  >
-                    <div className="hub-box-top">
-                      <div className="hub-box-icon" style={{ background: '#EFF6FF', color: '#1D4ED8' }}>🏛️</div>
-                      <span className="hub-box-badge" style={{ background: '#EFF6FF', color: '#1D4ED8' }}>{momsList.length} LOGGED</span>
+                    {/* Box 2: Shift Logout Section */}
+                    <div 
+                      className="hub-box-card box-logout"
+                      onClick={() => {
+                        setDashboardView('shift_logout');
+                      }}
+                    >
+                      <div className="hub-box-top">
+                        <div className="hub-box-icon" style={{ background: '#FEF2F2', color: '#DC2626' }}>🔒</div>
+
+                      </div>
+                      <h4>2. Daily Duty Logout Section</h4>
+                      <p>Conclude daily shift, record verified server exit timestamp, and save day summary.</p>
+                      <button type="button" className="hub-box-action-btn">
+                        <span>⏱️ Daily Duty Logout →</span>
+                      </button>
                     </div>
-                    <h4>3. Minutes of Meeting (MOM)</h4>
-                    <p>Record meeting details, agenda, decisions, and action items with deadlines.</p>
-                    <button type="button" className="hub-box-action-btn">
-                      <span>➕ Create / View MOM →</span>
-                    </button>
-                  </div>
 
-                  {/* Box 4: Create New Task */}
-                  <div 
-                    className="hub-box-card box-task"
-                    onClick={() => {
-                      setNewTaskAssignedTo(currentUser?.name || 'Demo Managing Partner');
-                      setDashboardView('task_page');
-                    }}
-                  >
-                    <div className="hub-box-top">
-                      <div className="hub-box-icon" style={{ background: '#F5F3FF', color: '#7C3AED' }}>🎯</div>
-                      <span className="hub-box-badge" style={{ background: '#F5F3FF', color: '#7C3AED' }}>{tasksList.length} TASKS</span>
+                    {/* Box 3: Minutes of Meeting (MOM) */}
+                    <div 
+                      className="hub-box-card box-mom"
+                      onClick={() => {
+                        setMomOrganizer(currentUser?.name || 'Demo Managing Partner');
+                        setMomActiveSubTab('basic');
+                        setDashboardView('mom_page');
+                      }}
+                    >
+                      <div className="hub-box-top">
+                        <div className="hub-box-icon" style={{ background: '#EFF6FF', color: '#1D4ED8' }}>🏛️</div>
+
+                      </div>
+                      <h4>3. Minutes of Meeting (MOM)</h4>
+                      <p>Record meeting details, agenda, decisions, and action items with deadlines.</p>
+                      <button type="button" className="hub-box-action-btn">
+                        <span>➕ Create / View MOM →</span>
+                      </button>
                     </div>
-                    <h4>4. Create New Task</h4>
-                    <p>Create tasks for yourself or assign audit tasks to team members with priorities.</p>
-                    <button type="button" className="hub-box-action-btn">
-                      <span>➕ Create / Assign Task →</span>
-                    </button>
-                  </div>
 
-                </div>
+                    {/* Box 4: Create New Task */}
+                    <div 
+                      className="hub-box-card box-task"
+                      onClick={() => {
+                        setNewTaskAssignedTo(currentUser?.name || 'Demo Managing Partner');
+                        setDashboardView('task_page');
+                      }}
+                    >
+                      <div className="hub-box-top">
+                        <div className="hub-box-icon" style={{ background: '#F5F3FF', color: '#7C3AED' }}>🎯</div>
+
+                      </div>
+                      <h4>4. Create New Task</h4>
+                      <p>Create tasks for yourself or assign audit tasks to team members with priorities.</p>
+                      <button type="button" className="hub-box-action-btn">
+                        <span>➕ Create / Assign Task →</span>
+                      </button>
+                    </div>
+
+                  </div>
+                )}
 
                 {/* Navigation Tabs between Super Admin Views & Submitted History */}
                 <div className="dash-tab-strip" style={{ marginBottom: '1.5rem' }}>
@@ -1327,9 +1572,17 @@ export default function App() {
                               <button 
                                 type="button" 
                                 className="btn-card-edit-role"
-                                onClick={() => setEditingRoleUser(user)}
+                                onClick={() => openEditUserModal(user)}
                               >
-                                ✏️ Reassign Unit / Role
+                                ✏️ Edit User / Password
+                              </button>
+                              <button 
+                                type="button" 
+                                className="btn-card-delete-user"
+                                onClick={() => handleDeleteUser(user)}
+                                style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA', borderRadius: '8px', padding: '0.4rem 0.75rem', fontSize: '0.725rem', fontWeight: '700', cursor: 'pointer' }}
+                              >
+                                🗑️ Delete User
                               </button>
                               <button 
                                 type="button" 
@@ -1405,8 +1658,22 @@ export default function App() {
                       </div>
 
                       <div style={{ background: '#F8FAFC', padding: '0.6rem 0.75rem', borderRadius: '12px', fontSize: '0.725rem', color: '#475569', marginTop: '0.5rem' }}>
-                        <div>🎯 <strong>Objective:</strong> {rep.workObjective || 'General Audit Verification'}</div>
-                        <div style={{ marginTop: '0.25rem' }}>🏆 <strong>Target:</strong> {rep.targetToAchieve || 'Standard compliance verified'}</div>
+                        {rep.workObjective && <div>🎯 <strong>Objective:</strong> {rep.workObjective}</div>}
+                        {rep.targetToAchieve && <div style={{ marginTop: '0.25rem' }}>🏆 <strong>Target:</strong> {rep.targetToAchieve}</div>}
+                        {rep.duration && (
+                          <div style={{ marginTop: '0.25rem', color: '#1E3A8A', fontWeight: '700' }}>⏱️ <strong>Shift Duration:</strong> {rep.duration}</div>
+                        )}
+                        {rep.objectiveCompleted && (
+                          <div style={{ marginTop: '0.25rem' }}>📈 <strong>Objective Completed:</strong> {rep.objectiveCompleted}</div>
+                        )}
+                        {rep.workDescription && (
+                          <div style={{ marginTop: '0.25rem', whiteSpace: 'pre-line' }}>📝 <strong>Audit Notes:</strong> {rep.workDescription}</div>
+                        )}
+                        {rep.escalations && (
+                          <div style={{ marginTop: '0.35rem', background: '#FEF2F2', padding: '0.35rem 0.5rem', borderRadius: '6px', color: '#DC2626', border: '1px solid #FECACA', whiteSpace: 'pre-line' }}>
+                            🚨 <strong>Escalations / Key Focus:</strong> {rep.escalations}
+                          </div>
+                        )}
                         {rep.caRemarks && (
                           <div style={{ marginTop: '0.35rem', background: '#FFFBEB', padding: '0.35rem 0.5rem', borderRadius: '6px', color: '#B45309', border: '1px solid #FDE68A' }}>
                             ⚠️ <strong>CA Remarks to Management:</strong> {rep.caRemarks}
@@ -1417,7 +1684,12 @@ export default function App() {
                             🔒 <strong>Evening Handover:</strong> {rep.logoutRemarks}
                           </div>
                         )}
-                        <div style={{ marginTop: '0.35rem', color: '#047857', display: 'flex', justifyContent: 'space-between' }}>
+                        {rep.logoutLatitude && (
+                          <div style={{ marginTop: '0.35rem', color: '#0369A1', fontSize: '0.675rem' }}>
+                            📍 <strong>Logout GPS:</strong> {Number(rep.logoutLatitude).toFixed(6)}, {Number(rep.logoutLongitude).toFixed(6)}
+                          </div>
+                        )}
+                        <div style={{ marginTop: '0.35rem', color: '#047857', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.25rem' }}>
                           <span>🤝 <strong>Unit POC:</strong> {rep.pocName || 'Not specified'}</span>
                           <span>⏱️ {rep.timestamp || 'Verified'}</span>
                         </div>
@@ -1482,6 +1754,11 @@ export default function App() {
                       <div style={{ background: '#F8FAFC', padding: '0.5rem 0.65rem', borderRadius: '10px', fontSize: '0.725rem', color: '#475569' }}>
                         <div>📅 <strong>Shift Date:</strong> {att.date || '12-Aug-2026'} • <strong>Window:</strong> {att.timeWindow}</div>
                         <div style={{ marginTop: '0.25rem' }}>⏳ <strong>Duration:</strong> {att.duration || 'Session Active'}</div>
+                        {att.logoutLatitude && (
+                          <div style={{ marginTop: '0.25rem', color: '#0369A1' }}>
+                            📍 <strong>Logout GPS:</strong> {Number(att.logoutLatitude).toFixed(6)}, {Number(att.logoutLongitude).toFixed(6)}
+                          </div>
+                        )}
                         {att.managerRemarks && (
                           <div style={{ marginTop: '0.25rem', color: '#1E3A8A' }}>
                             💬 <strong>Note:</strong> {att.managerRemarks}
@@ -1546,16 +1823,20 @@ export default function App() {
                       </div>
 
                       <div style={{ background: '#F8FAFC', padding: '0.5rem 0.65rem', borderRadius: '10px', fontSize: '0.725rem', color: '#475569', marginTop: '0.4rem' }}>
-                        <div>🎯 <strong>Objective:</strong> {rep.workObjective || 'General Audit Verification'}</div>
-                        <div style={{ marginTop: '0.25rem' }}>🏆 <strong>Target:</strong> {rep.targetToAchieve || 'Standard compliance verified'}</div>
+                        {rep.workObjective && <div>🎯 <strong>Objective:</strong> {rep.workObjective}</div>}
+                        {rep.targetToAchieve && <div style={{ marginTop: '0.25rem' }}>🏆 <strong>Target:</strong> {rep.targetToAchieve}</div>}
+                        {rep.duration && (
+                          <div style={{ marginTop: '0.25rem', color: '#1E3A8A', fontWeight: '700' }}>⏱️ <strong>Shift Duration:</strong> {rep.duration}</div>
+                        )}
+                        {rep.objectiveCompleted && (
+                          <div style={{ marginTop: '0.25rem' }}>📈 <strong>Objective Completed:</strong> {rep.objectiveCompleted}</div>
+                        )}
+                        {rep.workDescription && (
+                          <div style={{ marginTop: '0.25rem', whiteSpace: 'pre-line' }}>📝 <strong>Audit Notes:</strong> {rep.workDescription}</div>
+                        )}
                         {rep.caRemarks && (
                           <div style={{ marginTop: '0.25rem', color: '#B45309' }}>
                             ⚠️ <strong>CA Remarks:</strong> {rep.caRemarks}
-                          </div>
-                        )}
-                        {rep.logoutRemarks && (
-                          <div style={{ marginTop: '0.25rem', color: '#DC2626', background: '#FEF2F2', padding: '0.25rem 0.5rem', borderRadius: '6px' }}>
-                            🔒 <strong>Evening Handover:</strong> {rep.logoutRemarks}
                           </div>
                         )}
                         <div style={{ marginTop: '0.25rem', color: '#047857' }}>
@@ -1573,14 +1854,10 @@ export default function App() {
                 )}
               </div>
             )}
+          </>
+        )}
 
-              </>
-            )}
-
-            {/* ═══════════════════════════════════════════════════════
-               ── PAGE: DAILY DUTY LOGIN ENTRY (FULL PAGE VIEW) ──
-               ═══════════════════════════════════════════════════════ */}
-            {dashboardView === 'duty_entry' && (
+        {dashboardView === 'duty_entry' && (
               <div className="dedicated-page-view page-entry" style={{ animation: 'slideInPage 0.3s ease' }}>
                 {/* Page Header with Back Navigation */}
                 <div className="page-view-header">
@@ -1629,197 +1906,321 @@ export default function App() {
                   </div>
                 )}
 
-                {/* 10 Parameters Duty Entry Form */}
-                <form onSubmit={(e) => { e.preventDefault(); handleSaveDutyReport(false); }}>
-                  <div className="duty-form-grid">
-                    
-                    {/* Parameter 1: Login Time (Server Auto-Captured) */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>⏱️ 1. Login Time (Server Auto-Captured)</span>
-                        <span className="req">*</span>
-                      </label>
-                      <div className="duty-auto-time-pill">
-                        <span className="pulse-dot-live"></span>
-                        <span>⏱️ {dutyLoginTime || currentTimeStr}</span>
-                        <span style={{ fontSize: '0.685rem', color: '#047857', background: '#FFFFFF', padding: '0.2rem 0.5rem', borderRadius: '6px', marginLeft: 'auto', fontWeight: '800' }}>
-                          🔒 Auto-Captured from Server
-                        </span>
+                {hasSubmittedDutyToday ? (
+                  <div className="duty-sheet-card" style={{ textAlign: 'center', padding: '3rem 2rem', border: '1.5px solid #10B981', borderRadius: '16px', background: '#ECFDF5', marginTop: '1rem' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+                    <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#065F46', marginBottom: '0.5rem' }}>Daily Duty Entry Logged</h4>
+                    <p style={{ fontSize: '0.825rem', color: '#047857', maxWidth: '400px', margin: '0 auto 1.5rem' }}>
+                      You have already submitted your 10-parameter daily audit questionnaire for today's shift. Your active duty session is verified.
+                    </p>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'white', padding: '0.5rem 1rem', borderRadius: '30px', border: '1px solid #A7F3D0', fontSize: '0.75rem', fontWeight: '700', color: '#065F46' }}>
+                      <span className="pulse-dot-live"></span>
+                      <span>ACTIVE SESSION TIME: {dutyLoginTime || currentTimeStr}</span>
+                    </div>
+                  </div>
+                ) : isSubmittingDuty ? (
+                  <div className="duty-sheet-card" style={{ textAlign: 'center', padding: '3rem 2rem', border: '1.5px solid #1D4ED8', marginTop: '1rem' }}>
+                    <div className="spinner-loader" style={{ marginBottom: '1.25rem' }}></div>
+                    <strong style={{ fontSize: '0.85rem', color: '#1E3A8A' }}>Uploading Daily Duty Questionnaire to Central Database...</strong>
+                  </div>
+                ) : (
+                  <>
+                    {dutySubmitError && (
+                      <div className="duty-error-alert" style={{ background: '#FEF2F2', border: '1.5px solid #FCA5A5', color: '#991B1B', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                          <div style={{ fontSize: '0.8rem', fontWeight: '700' }}>{dutySubmitError}</div>
+                        </div>
+                        <button 
+                          type="button"
+                          className="btn-pill-primary"
+                          style={{ background: '#DC2626', color: 'white', alignSelf: 'flex-start', padding: '0.4rem 0.85rem', fontSize: '0.725rem' }}
+                          onClick={() => handleSaveDutyReport(false)}
+                          disabled={isSubmittingDuty}
+                        >
+                          🔄 Retry Upload to Database
+                        </button>
                       </div>
-                      <span className="duty-field-hint">Exact timestamp recorded automatically on central server</span>
-                    </div>
+                    )}
 
-                    {/* Parameter 2: Full Name */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>👤 2. Full Name</span>
-                        <span className="req">*</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        className="duty-input-box"
-                        value={dutyFullName}
-                        onChange={(e) => setDutyFullName(e.target.value)}
-                        placeholder="e.g. Ravi Teja / Audit Student Name"
-                        required
-                      />
-                      <span className="duty-field-hint">Auditor / Articled Assistant Name</span>
-                    </div>
+                    {/* 10 Parameters Duty Entry Form */}
+                    <form onSubmit={(e) => { e.preventDefault(); handleSaveDutyReport(false); }} className="duty-sheet-card">
+                      <div className="duty-form-grid">
+                        
+                        {/* Parameter 1: Login Time (Server Auto-Captured) */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>⏱️ 1. Login Time (Server Auto-Captured)</span>
+                            <span className="req">*</span>
+                          </label>
+                          <div className="duty-auto-time-pill">
+                            <span className="pulse-dot-live"></span>
+                            <span>⏱️ {dutyLoginTime || currentTimeStr}</span>
+                            <span style={{ fontSize: '0.685rem', color: '#047857', background: '#FFFFFF', padding: '0.2rem 0.5rem', borderRadius: '6px', marginLeft: 'auto', fontWeight: '800' }}>
+                              🔒 Auto-Captured from Server
+                            </span>
+                          </div>
+                          <span className="duty-field-hint">Exact timestamp recorded automatically on central server</span>
+                        </div>
 
-                    {/* Parameter 3: Student Registration No. */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>🎓 3. Student Registration No.</span>
-                        <span className="req">*</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        className="duty-input-box"
-                        value={dutyStudentRegNo}
-                        onChange={(e) => setDutyStudentRegNo(e.target.value.toUpperCase())}
-                        placeholder="e.g. SRO0684920 / CRO123456"
-                        required
-                      />
-                      <span className="duty-field-hint">ICAI / SRO / CRO / NRO Student Reg. No.</span>
-                    </div>
+                        {/* Parameter 2: Full Name */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>👤 2. Full Name</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyFullName}
+                            onChange={(e) => setDutyFullName(e.target.value)}
+                            placeholder="e.g. Ravi Teja / Audit Student Name"
+                            required
+                          />
+                          <span className="duty-field-hint">Auditor / Articled Assistant Name</span>
+                        </div>
 
-                    {/* Parameter 4: TTD Audit Unit */}
-                    <div className="duty-field-wrapper full-row">
-                      <label className="duty-field-label">
-                        <span>🏛️ 4. TTD Audit Unit Details attending today</span>
-                        <span className="req">*</span>
-                      </label>
-                      <select 
-                        className="duty-select-box"
-                        value={dutyUnitDetails}
-                        onChange={(e) => setDutyUnitDetails(e.target.value)}
-                        required
-                      >
-                        <option value="">-- Select TTD Audit Unit --</option>
-                        {ORGANIZATIONAL_UNITS.map((u) => (
-                          <option key={u} value={u}>{u}</option>
-                        ))}
-                      </select>
-                      <span className="duty-field-hint">Official 8-unit concurrent & internal audit assignment</span>
-                    </div>
+                        {/* Parameter 3: Student Registration No. */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>🎓 3. Student Registration No.</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyStudentRegNo}
+                            onChange={(e) => setDutyStudentRegNo(e.target.value.toUpperCase())}
+                            placeholder="e.g. SRO0684920"
+                            required
+                          />
+                          <span className="duty-field-hint">ICAI Registration No.</span>
+                        </div>
 
-                    {/* Parameter 5: Type of Audit Work */}
-                    <div className="duty-field-wrapper full-row">
-                      <label className="duty-field-label">
-                        <span>📋 5. Type of Audit Work</span>
-                        <span className="req">*</span>
-                      </label>
-                      <select 
-                        className="duty-select-box"
-                        value={dutyAuditWorkType}
-                        onChange={(e) => setDutyAuditWorkType(e.target.value)}
-                        required
-                      >
-                        <option value="">-- Select Audit Work Type --</option>
-                        {AUDIT_WORK_TYPES.map((w) => (
-                          <option key={w} value={w}>{w}</option>
-                        ))}
-                      </select>
-                      <span className="duty-field-hint">Category of audit work being performed today</span>
-                    </div>
+                        {/* Parameter 4: TTD Audit Unit Details */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🏛️ 4. TTD Audit Unit Details attending today</span>
+                            <span className="req">*</span>
+                          </label>
+                          <div className={`custom-dropdown-container ${isDutyUnitDropdownOpen ? 'open' : ''}`}>
+                            <button
+                              type="button"
+                              className="custom-dropdown-trigger"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsDutyUnitDropdownOpen(!isDutyUnitDropdownOpen);
+                                setIsDutyWorkTypeDropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {dutyUnitDetails.length === 0
+                                  ? '-- Select TTD Audit Units --'
+                                  : dutyUnitDetails.length === 1
+                                  ? dutyUnitDetails[0]
+                                  : `${dutyUnitDetails.length} Units Selected (${dutyUnitDetails.map(u => u.split(' [')[0]).join(', ')})`}
+                              </span>
+                              <span className="custom-dropdown-arrow">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                              </span>
+                            </button>
 
-                    {/* Parameter 6: Detailed Work Description */}
-                    <div className="duty-field-wrapper full-row">
-                      <label className="duty-field-label">
-                        <span>📝 6. Detailed Work Description</span>
-                        <span className="req">*</span>
-                      </label>
-                      <textarea 
-                        className="duty-textarea-box"
-                        rows="3"
-                        value={dutyWorkObjective}
-                        onChange={(e) => setDutyWorkObjective(e.target.value)}
-                        placeholder="Describe in detail the audit work performed today (findings, procedures, observations)..."
-                        required
-                      />
-                      <span className="duty-field-hint">Narrative of audit procedures, findings, and observations</span>
-                    </div>
+                            {isDutyUnitDropdownOpen && (
+                              <div className="custom-dropdown-menu">
+                                {ORGANIZATIONAL_UNITS.map((u) => {
+                                  const isSelected = dutyUnitDetails.includes(u);
+                                  return (
+                                    <div
+                                      key={u}
+                                      className={`custom-dropdown-item ${isSelected ? 'selected' : ''}`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        let currentSelected = [...dutyUnitDetails];
+                                        if (currentSelected.includes(u)) {
+                                          currentSelected = currentSelected.filter(item => item !== u);
+                                        } else {
+                                          currentSelected.push(u);
+                                        }
+                                        setDutyUnitDetails(currentSelected);
+                                      }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="custom-dropdown-checkbox"
+                                        checked={isSelected}
+                                        readOnly
+                                      />
+                                      <span>{u}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                          <span className="duty-field-hint">Click the drop box to select multiple units you will attend/audit today</span>
+                        </div>
 
-                    {/* Parameter 7: Number of Vouchers */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>🧾 7. Number of Vouchers / Documents Verified</span>
-                        <span className="req">*</span>
-                      </label>
-                      <input 
-                        type="number" 
-                        className="duty-input-box"
-                        value={dutyVouchersVerified}
-                        onChange={(e) => setDutyVouchersVerified(e.target.value)}
-                        placeholder="e.g. 45"
-                        min="0"
-                        required
-                      />
-                      <span className="duty-field-hint">Total ledger entries, vouchers, tokens, or documents reviewed</span>
-                    </div>
+                        {/* Parameter 5: TTD Audit Sub-Unit Details */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🏢 5. TTD Audit Sub-Unit Details attending today</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutySubUnitDetails}
+                            onChange={(e) => setDutySubUnitDetails(e.target.value)}
+                            placeholder="e.g. Counter #4 Token Drawer / Marketing Procurement Cell"
+                          />
+                          <span className="duty-field-hint">Specific desk, section, counter, or room inside unit</span>
+                        </div>
 
-                    {/* Parameter 8: Target to Achieve */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>🎯 8. Target to Achieve / Expected Completion</span>
-                        <span className="req">*</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        className="duty-input-box"
-                        value={dutyTargetToAchieve}
-                        onChange={(e) => setDutyTargetToAchieve(e.target.value)}
-                        placeholder="e.g. Complete Donor Cell audit by 3:00 PM"
-                        required
-                      />
-                      <span className="duty-field-hint">Specific audit milestone or completion target for today's shift</span>
-                    </div>
+                        {/* Parameter 6: Type of audit work done for */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>📋 6. Type of audit work done for</span>
+                            <span className="req">*</span>
+                          </label>
+                          <div className={`custom-dropdown-container ${isDutyWorkTypeDropdownOpen ? 'open' : ''}`}>
+                            <button
+                              type="button"
+                              className="custom-dropdown-trigger"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsDutyWorkTypeDropdownOpen(!isDutyWorkTypeDropdownOpen);
+                                setIsDutyUnitDropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {dutyAuditWorkType.length === 0
+                                  ? '-- Select Type of Audit Work --'
+                                  : dutyAuditWorkType.length === 1
+                                  ? dutyAuditWorkType[0]
+                                  : `${dutyAuditWorkType.length} Selected (${dutyAuditWorkType.join(', ')})`}
+                              </span>
+                              <span className="custom-dropdown-arrow">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                              </span>
+                            </button>
 
-                    {/* Parameter 9: CA Remarks */}
-                    <div className="duty-field-wrapper full-row">
-                      <label className="duty-field-label">
-                        <span>✍️ 9. CA Remarks / Observations for Management</span>
-                        <span className="req">*</span>
-                      </label>
-                      <textarea 
-                        className="duty-textarea-box"
-                        rows="3"
-                        value={dutyCaRemarks}
-                        onChange={(e) => setDutyCaRemarks(e.target.value)}
-                        placeholder="Key audit observations, discrepancies, or remarks for CA in-charge..."
-                        required
-                      />
-                      <span className="duty-field-hint">High priority findings for the CA in-charge & management</span>
-                    </div>
+                            {isDutyWorkTypeDropdownOpen && (
+                              <div className="custom-dropdown-menu">
+                                {['Monthly Internal Audit', 'Quarterly Internal Audit', 'Half-Yearly Internal Audit'].map((w) => {
+                                  const isSelected = dutyAuditWorkType.includes(w);
+                                  return (
+                                    <div
+                                      key={w}
+                                      className={`custom-dropdown-item ${isSelected ? 'selected' : ''}`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        let currentSelected = [...dutyAuditWorkType];
+                                        if (currentSelected.includes(w)) {
+                                          currentSelected = currentSelected.filter(item => item !== w);
+                                        } else {
+                                          currentSelected.push(w);
+                                        }
+                                        setDutyAuditWorkType(currentSelected);
+                                      }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="custom-dropdown-checkbox"
+                                        checked={isSelected}
+                                        readOnly
+                                      />
+                                      <span>{w}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                          <span className="duty-field-hint">Click the drop box to select the audit frequency/work type you are attending</span>
+                        </div>
 
-                    {/* Parameter 10: Point of Contact Name */}
-                    <div className="duty-field-wrapper">
-                      <label className="duty-field-label">
-                        <span>🤝 10. Point of Contact Name [ POC ] within the unit</span>
-                        <span className="req">*</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        className="duty-input-box"
-                        value={dutyPocName}
-                        onChange={(e) => setDutyPocName(e.target.value)}
-                        placeholder="e.g. Sri S. Ramana Murthy, Superintendent / AEO"
-                        required
-                      />
-                      <span className="duty-field-hint">Designated TTD officer or unit in-charge</span>
-                    </div>
-                  </div>
+                        {/* Parameter 7: Work Objective of today */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🎯 7. Work Objective of today</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyWorkObjective}
+                            onChange={(e) => setDutyWorkObjective(e.target.value)}
+                            placeholder="e.g. Verify physical stock ledger against physical vouchers"
+                            required
+                          />
+                          <span className="duty-field-hint">Enter the target audit objectives for the day</span>
+                        </div>
 
-                  {/* Form Action Controls */}
-                  <div className="duty-action-group" style={{ marginTop: '1.5rem' }}>
-                    <button 
-                      type="submit" 
-                      className="btn-duty-submit"
-                    >
-                      <span>💾 Submit Daily Duty Entry</span>
-                    </button>
-                  </div>
-                </form>
+                        {/* Parameter 8: Vouchers/files/registers to be verified today */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>📂 8. Vouchers/files/registers to be verified today</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyVouchersVerified}
+                            onChange={(e) => setDutyVouchersVerified(e.target.value)}
+                            placeholder="e.g. Bid Token Registry, July Sales Vouchers, Stock Ledger Page 10-25"
+                          />
+                          <span className="duty-field-hint">Specify files, registers, or vouchers to be verified</span>
+                        </div>
+
+                        {/* Parameter 9: Targets to achieve today */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🏆 9. Targets to achieve today</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyTargetToAchieve}
+                            onChange={(e) => setDutyTargetToAchieve(e.target.value)}
+                            placeholder="e.g. Reconcile all cash records for the week / complete physical count"
+                            required
+                          />
+                          <span className="duty-field-hint">Measurable goal for the daily shift</span>
+                        </div>
+
+                        {/* Parameter 10: Designated Unit Point of Contact (POC) */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🤝 10. Designated Unit Point of Contact (POC)</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box"
+                            value={dutyPocName}
+                            onChange={(e) => setDutyPocName(e.target.value)}
+                            placeholder="e.g. Sri S. Ramana Murthy, Superintendent / AEO"
+                            required
+                          />
+                          <span className="duty-field-hint">Designated TTD officer or unit in-charge</span>
+                        </div>
+                      </div>
+
+                      {/* Form Action Controls */}
+                      <div className="duty-action-group" style={{ marginTop: '1.5rem' }}>
+                        <button 
+                          type="submit" 
+                          className="btn-duty-submit"
+                        >
+                          <span>💾 Submit Daily Duty Entry</span>
+                        </button>
+                      </div>
+                    </form>
+                  </>
+                )}
               </div>
             )}
 
@@ -1845,7 +2246,7 @@ export default function App() {
                   <div className="page-view-title-group">
                     <div className="page-view-icon" style={{ background: '#FEF2F2', color: '#DC2626' }}>🔒</div>
                     <div>
-                      <h3 className="page-view-title">Shift Logout & Session Handover</h3>
+                      <h3 className="page-view-title">Daily Duty Logout & Session Handover</h3>
                       <p className="page-view-subtitle">Conclude today's audit shift and record verified server exit timestamp</p>
                     </div>
                   </div>
@@ -1856,53 +2257,244 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
-                {/* Shift Times Panel */}
-                <div style={{ background: '#FEF2F2', border: '1.5px solid #FECACA', borderRadius: '18px', padding: '1.5rem', marginBottom: '1.5rem' }}>
-                  <div className="user-shift-times" style={{ background: 'white', border: '1px solid #FECACA', borderRadius: 12, padding: '0.85rem 1rem', marginBottom: '1.25rem' }}>
-                    <div>
-                      <span style={{ color: '#64748B', fontSize: '0.7rem' }}>TODAY'S VERIFIED LOGIN TIME</span>
-                      <strong style={{ fontSize: '0.95rem', color: '#0F172A' }}>{dutyLoginTime || currentTimeStr}</strong>
-                    </div>
-                    <div>
-                      <span style={{ color: '#64748B', fontSize: '0.7rem' }}>CURRENT SERVER TIME (LOGOUT TIMESTAMP)</span>
-                      <strong style={{ fontSize: '0.95rem', color: '#DC2626' }}>{currentTimeStr}</strong>
+                {logoutToast ? (
+                  <div className="duty-sheet-card" style={{ textAlign: 'center', padding: '3rem 2rem', border: '1.5px solid #10B981', borderRadius: '16px', background: '#ECFDF5', marginTop: '1rem' }}>
+                    <div style={{ fontSize: '3.5rem', marginBottom: '1.25rem' }}>🔒</div>
+                    <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#065F46', marginBottom: '0.5rem' }}>Shift Concluded Successfully</h4>
+                    <p style={{ fontSize: '0.825rem', color: '#047857', maxWidth: '400px', margin: '0 auto' }}>
+                      Your handover remarks, observations, and shift duration have been logged in the central database.
+                    </p>
+                    <div style={{ marginTop: '1.5rem', fontSize: '0.7rem', color: '#047857', fontWeight: '700' }}>
+                      EXIT TIMESTAMP: {logoutToast.time}
                     </div>
                   </div>
-
-                  <div className="duty-field-wrapper full-row" style={{ marginBottom: '1.25rem' }}>
-                    <label className="duty-field-label">
-                      <span>📝 Day-End Handover & Logout Remarks (Optional)</span>
-                    </label>
-                    <textarea 
-                      className="duty-textarea-box"
-                      rows="3"
-                      value={logoutRemarks}
-                      onChange={(e) => setLogoutRemarks(e.target.value)}
-                      placeholder="Briefly state key handover items or notes before logging out..."
-                    />
+                ) : isSubmittingLogout ? (
+                  <div className="duty-sheet-card" style={{ textAlign: 'center', padding: '3rem 2rem', border: '1.5px solid #1D4ED8', marginTop: '1rem' }}>
+                    <div className="spinner-loader" style={{ marginBottom: '1.25rem' }}></div>
+                    <strong style={{ fontSize: '0.85rem', color: '#1E3A8A' }}>Concluding Shift & Recording Exit GPS Location...</strong>
                   </div>
+                ) : (
+                  <>
+                    {logoutSubmitError && (
+                      <div className="duty-error-alert" style={{ background: '#FEF2F2', border: '1.5px solid #FCA5A5', color: '#991B1B', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                          <div style={{ fontSize: '0.8rem', fontWeight: '700' }}>{logoutSubmitError}</div>
+                        </div>
+                        <button 
+                          type="button"
+                          className="btn-pill-primary"
+                          style={{ background: '#DC2626', color: 'white', alignSelf: 'flex-start', padding: '0.4rem 0.85rem', fontSize: '0.725rem' }}
+                          onClick={(e) => handleLogout(e, false)}
+                          disabled={isSubmittingLogout}
+                        >
+                          🔄 Retry Conclude Shift
+                        </button>
+                      </div>
+                    )}
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-                    <button 
-                      type="button"
-                      className="btn-card-edit-role"
-                      onClick={() => setDashboardView('hub')}
-                      style={{ padding: '0.65rem 1.25rem' }}
-                    >
-                      ← Back to Dashboard
-                    </button>
+                    {/* Detailed Logout Exit Form */}
+                    <form onSubmit={handleLogout} className="duty-sheet-card" style={{ border: '1.5px solid #F59E0B', marginTop: '1rem' }}>
+                      <div className="user-shift-times" style={{ background: 'white', border: '1px solid #FDE047', borderRadius: 12, padding: '0.85rem 1rem', marginBottom: '1.5rem' }}>
+                        <div>
+                          <span style={{ color: '#64748B', fontSize: '0.7rem' }}>TODAY'S VERIFIED LOGIN TIME</span>
+                          <strong style={{ fontSize: '0.95rem', color: '#0F172A' }}>{dutyLoginTime || currentTimeStr}</strong>
+                        </div>
+                        <div>
+                          <span style={{ color: '#64748B', fontSize: '0.7rem' }}>CURRENT SERVER TIME (LOGOUT TIMESTAMP)</span>
+                          <strong style={{ fontSize: '0.95rem', color: '#DC2626' }}>{currentTimeStr}</strong>
+                        </div>
+                      </div>
 
-                    <button 
-                      type="button"
-                      className="btn-duty-logout"
-                      onClick={handleLogout}
-                      style={{ padding: '0.75rem 1.85rem', fontSize: '0.9rem' }}
-                    >
-                      <span>⏱️ Conclude Shift & Stamp Server Logout</span>
-                    </button>
-                  </div>
-                </div>
+                      <div className="duty-form-grid">
+                        {/* Field 1: Logout Time */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>⏱️ 1. Logout Time</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box time-box" 
+                            value={currentTimeStr} 
+                            readOnly 
+                          />
+                          <span className="duty-field-hint">Server-authoritative exit timestamp</span>
+                        </div>
+
+                        {/* Field 2: Full Name */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>✍️ 2. Full Name</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box" 
+                            value={logoutFullName} 
+                            onChange={(e) => setLogoutFullName(e.target.value)} 
+                            required 
+                          />
+                          <span className="duty-field-hint">Auditor / Articled Assistant Name</span>
+                        </div>
+
+                        {/* Field 3: Student Registration No. */}
+                        <div className="duty-field-wrapper">
+                          <label className="duty-field-label">
+                            <span>🎓 3. Student Registration No.</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box" 
+                            value={logoutStudentRegNo} 
+                            onChange={(e) => setLogoutStudentRegNo(e.target.value.toUpperCase())} 
+                            required 
+                          />
+                          <span className="duty-field-hint">ICAI Student Reg. No.</span>
+                        </div>
+
+                        {/* Field 4: TTD Audit Unit Details attended today */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🏛️ 4. TTD Audit Unit Details attended today</span>
+                            <span className="req">*</span>
+                          </label>
+                          <select 
+                            className="duty-select-box"
+                            value={logoutUnitDetails}
+                            onChange={(e) => setLogoutUnitDetails(e.target.value)}
+                            required
+                          >
+                            <option value="">-- Select TTD Audit Unit --</option>
+                            {ORGANIZATIONAL_UNITS.map((u) => (
+                              <option key={u} value={u}>{u}</option>
+                            ))}
+                          </select>
+                          <span className="duty-field-hint">Select the TTD audit unit attended during today's shift</span>
+                        </div>
+
+                        {/* Field 5: TTD Audit Sub-Unit Details */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🏢 5. TTD Audit Sub-Unit Details attending today</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box" 
+                            value={logoutSubUnitDetails} 
+                            onChange={(e) => setLogoutSubUnitDetails(e.target.value)} 
+                            placeholder="e.g. Counter #4 Token Drawer / Marketing Procurement Cell"
+                          />
+                          <span className="duty-field-hint">Specific desk, section, counter, or room inside unit</span>
+                        </div>
+
+                        {/* Field 6: Type of audit work done for */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>📋 6. Type of audit work done for</span>
+                            <span className="req">*</span>
+                          </label>
+                          <select 
+                            className="duty-select-box"
+                            value={logoutAuditWorkType}
+                            onChange={(e) => setLogoutAuditWorkType(e.target.value)}
+                            required
+                          >
+                            <option value="">-- Select Audit Work Type --</option>
+                            {['Monthly Internal Audit', 'Quarterly Internal Audit', 'Half-Yearly Internal Audit'].map((w) => (
+                              <option key={w} value={w}>{w}</option>
+                            ))}
+                          </select>
+                          <span className="duty-field-hint">Select the audit frequency/work type performed</span>
+                        </div>
+
+                        {/* Field 7: How much of the objective has been completed */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🎯 7. How much of the objective has been completed</span>
+                            <span className="req">*</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            className="duty-input-box" 
+                            value={logoutObjectiveCompleted} 
+                            onChange={(e) => setLogoutObjectiveCompleted(e.target.value)} 
+                            placeholder="e.g. 100% of physical stock ledger verification completed" 
+                            required 
+                          />
+                          <span className="duty-field-hint">Indicate the progress of today's work objectives</span>
+                        </div>
+
+                        {/* Field 8: Any Escalations or Any Key focus points */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🚨 8. Any Escalations or Any Key focus points from today's work that needs to be highlighted [ Detailed activity level LOG ]</span>
+                          </label>
+                          <textarea 
+                            className="duty-textarea-box" 
+                            rows="3" 
+                            value={logoutEscalations} 
+                            onChange={(e) => setLogoutEscalations(e.target.value)} 
+                            placeholder="Enter any issues, seal breaches, deviations, or items requiring escalation..." 
+                          />
+                          <span className="duty-field-hint">Mention critical discrepancies, security breach findings, or escalation points</span>
+                        </div>
+
+                        {/* Field 9: Description of the work done today */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>📝 9. Description of the work done today [ Audit Notes or Audit Observations ]</span>
+                            <span className="req">*</span>
+                          </label>
+                          <textarea 
+                            className="duty-textarea-box" 
+                            rows="4" 
+                            value={logoutWorkDescription} 
+                            onChange={(e) => setLogoutWorkDescription(e.target.value)} 
+                            placeholder="Enter detailed audit notes, ledger checks, discrepancies found, and observations..." 
+                            required 
+                          />
+                          <span className="duty-field-hint">Comprehensive summary of observations and audit checks conducted</span>
+                        </div>
+
+                        {/* Field 10: Day-End Handover & Logout Remarks (Optional) */}
+                        <div className="duty-field-wrapper full-row">
+                          <label className="duty-field-label">
+                            <span>🔒 10. Day-End Handover & Logout Remarks (Optional)</span>
+                          </label>
+                          <textarea 
+                            className="duty-textarea-box" 
+                            rows="2" 
+                            value={logoutRemarks} 
+                            onChange={(e) => setLogoutRemarks(e.target.value)} 
+                            placeholder="Brief handover remarks for the next auditor or CA in-charge..." 
+                          />
+                          <span className="duty-field-hint">Any standard exit comments or shift handover notes</span>
+                        </div>
+                      </div>
+
+                      <div className="duty-action-group" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                        <button 
+                          type="button"
+                          className="btn-card-edit-role"
+                          onClick={() => setDashboardView('hub')}
+                          style={{ padding: '0.65rem 1.25rem' }}
+                        >
+                          ← Cancel
+                        </button>
+
+                        <button 
+                          type="submit"
+                          className="btn-duty-logout"
+                          style={{ padding: '0.75rem 1.85rem', fontSize: '0.9rem' }}
+                        >
+                          <span>💾 Submit Daily Duty Logout & Conclude Shift</span>
+                        </button>
+                      </div>
+                    </form>
+                  </>
+                )}
               </div>
             )}
 
@@ -2577,8 +3169,186 @@ export default function App() {
                 </button>
               </div>
 
+              <div>
+                <label className="sub-risk-label">Sub-Unit / Counter:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  placeholder="e.g. Counter No. 4 Daily Token Drawer"
+                  value={newUserSubUnit}
+                  onChange={(e) => setNewUserSubUnit(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Student Registration No.:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  placeholder="e.g. SRO0000001"
+                  value={newUserStudentRegNo}
+                  onChange={(e) => setNewUserStudentRegNo(e.target.value.toUpperCase())}
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Phone Number:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  placeholder="e.g. +91 98480 12345"
+                  value={newUserPhone}
+                  onChange={(e) => setNewUserPhone(e.target.value)}
+                />
+              </div>
+
               <button type="submit" className="btn-pill-primary" style={{ marginTop: '0.5rem' }}>
                 Create Account
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal: Edit User Account ── */}
+      {showEditUserModal && (
+        <div className="modal-overlay" onClick={() => { setShowEditUserModal(false); setEditingUser(null); }}>
+          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h4>Edit User Account</h4>
+              <button className="close-btn" onClick={() => { setShowEditUserModal(false); setEditingUser(null); }}>✕</button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="auth-form-stack" style={{ maxHeight: '75vh', overflowY: 'auto', paddingRight: '0.5rem' }}>
+              <div>
+                <label className="sub-risk-label">Full Name:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserName}
+                  onChange={(e) => setEditUserName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Login Email ID:</label>
+                <input 
+                  type="email" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserEmail}
+                  onChange={(e) => setEditUserEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Password / Credentials:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserPassword}
+                  onChange={(e) => setEditUserPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">User Role Level:</label>
+                <select 
+                  className="unit-select-custom"
+                  style={{ marginBottom: 0 }}
+                  value={editUserRole}
+                  onChange={(e) => {
+                    const r = e.target.value;
+                    setEditUserRole(r);
+                    if (r === 'SUPER_ADMIN') setEditUserRoleTitle('Super Administrator');
+                    else if (r === 'MANAGER') setEditUserRoleTitle('Department Audit Manager');
+                    else setEditUserRoleTitle('Field Auditor');
+                  }}
+                >
+                  <option value="SUPER_ADMIN">SUPER ADMIN</option>
+                  <option value="MANAGER">MANAGER</option>
+                  <option value="USER">FIELD AUDITOR / USER</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Designation / Role Title:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserRoleTitle}
+                  onChange={(e) => setEditUserRoleTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Assigned Organizational Unit:</label>
+                <button 
+                  type="button"
+                  className="unit-picker-trigger-btn"
+                  onClick={() => setUnitPickerModal({
+                    title: 'Select User Unit',
+                    subtitle: 'Assign primary organizational unit',
+                    allowAll: true,
+                    currentValue: editUserUnit,
+                    onSelect: (val) => setEditUserUnit(val)
+                  })}
+                >
+                  <div className="unit-trigger-text">
+                    <span className="unit-trigger-sub">Assigned Unit</span>
+                    <strong className="unit-trigger-val">{editUserUnit}</strong>
+                  </div>
+                  <svg className="unit-trigger-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Sub-Unit / Specific Counter:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserSubUnit}
+                  onChange={(e) => setEditUserSubUnit(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Student Registration No.:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserStudentRegNo}
+                  onChange={(e) => setEditUserStudentRegNo(e.target.value.toUpperCase())}
+                />
+              </div>
+
+              <div>
+                <label className="sub-risk-label">Phone Number:</label>
+                <input 
+                  type="text" 
+                  className="input-pill-field" 
+                  style={{ padding: '0.75rem 1rem' }}
+                  value={editUserPhone}
+                  onChange={(e) => setEditUserPhone(e.target.value)}
+                />
+              </div>
+
+              <button type="submit" className="btn-pill-primary" style={{ marginTop: '0.5rem' }}>
+                Save Changes
               </button>
             </form>
           </div>
@@ -2694,7 +3464,7 @@ export default function App() {
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <label className="sub-risk-label" style={{ marginBottom: '0.5rem' }}>1-Click Demo Login as Role:</label>
+              <label className="sub-risk-label" style={{ marginBottom: '0.5rem' }}>Master Super Admin Account:</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <button
                   type="button"
@@ -2703,7 +3473,7 @@ export default function App() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '0.75rem 0.95rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: '14px',
                     border: '1.5px solid #DDD6FE',
                     background: '#F5F3FF',
@@ -2712,63 +3482,13 @@ export default function App() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>👑</span>
+                    <span style={{ fontSize: '1.35rem' }}>👑</span>
                     <div>
-                      <strong style={{ fontSize: '0.85rem', color: '#5B21B6', display: 'block' }}>Super Administrator</strong>
-                      <span style={{ fontSize: '0.685rem', color: '#6D28D9' }}>Full Vault Access, Evidence PDFs & Accounts</span>
+                      <strong style={{ fontSize: '0.85rem', color: '#5B21B6', display: 'block' }}>cabuddy@gmail.com</strong>
+                      <span style={{ fontSize: '0.685rem', color: '#6D28D9' }}>Master Super Admin Access • Password: 12345678</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: '0.725rem', color: '#7C3AED', fontWeight: '800' }}>Enter →</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleQuickLoginRole('MANAGER')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.75rem 0.95rem',
-                    borderRadius: '14px',
-                    border: '1.5px solid #BFDBFE',
-                    background: '#EFF6FF',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>💼</span>
-                    <div>
-                      <strong style={{ fontSize: '0.85rem', color: '#1E40AF', display: 'block' }}>Department Manager</strong>
-                      <span style={{ fontSize: '0.685rem', color: '#256BF5' }}>Decide Auditor Roles, Assign Tasks & Remarks</span>
-                    </div>
-                  </div>
-                  <span style={{ fontSize: '0.725rem', color: '#256BF5', fontWeight: '800' }}>Enter →</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleQuickLoginRole('USER')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.75rem 0.95rem',
-                    borderRadius: '14px',
-                    border: '1.5px solid #A7F3D0',
-                    background: '#ECFDF5',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>📋</span>
-                    <div>
-                      <strong style={{ fontSize: '0.85rem', color: '#065F46', display: 'block' }}>Field Auditor</strong>
-                      <span style={{ fontSize: '0.685rem', color: '#059669' }}>Sub-Risk Reports, Vault PDF Uploads & Shifts</span>
-                    </div>
-                  </div>
-                  <span style={{ fontSize: '0.725rem', color: '#059669', fontWeight: '800' }}>Enter →</span>
+                  <span style={{ fontSize: '0.75rem', color: '#7C3AED', fontWeight: '800' }}>Login →</span>
                 </button>
               </div>
             </div>
@@ -3039,141 +3759,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ── Background Click-Backdrop when Widget is Open (After Login) ── */}
-      {isLoggedIn && isWidgetOpen && (
-        <div className="widget-click-backdrop" onClick={() => setIsWidgetOpen(false)} />
-      )}
-
-      {/* ── Right Bottom Corner Widget Button & 4-Sections Menu (Only Shown After Login) ── */}
-      {isLoggedIn && (
-        <div className="corner-widget-container">
-          {isWidgetOpen && (
-            <div className="widget-popup-menu" onClick={(e) => e.stopPropagation()}>
-              <div className="widget-menu-header">
-                <div className="widget-header-title">
-                  <span style={{ fontSize: '1rem' }}>⚡</span>
-                  <div>
-                    <h5>Operations Widget</h5>
-                    <span className="widget-header-sub">4 Quick Sections</span>
-                  </div>
-                </div>
-                <button 
-                  type="button" 
-                  className="widget-close-mini"
-                  onClick={() => setIsWidgetOpen(false)}
-                  title="Close Widget Menu"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="widget-sections-stack">
-                {/* Section 1: Login Button */}
-                <button 
-                  type="button" 
-                  className="widget-section-btn btn-login"
-                  onClick={() => {
-                    setIsWidgetOpen(false);
-                    setShowQuickLoginModal(true);
-                  }}
-                >
-                  <div className="widget-icon-pill login">🔑</div>
-                  <div className="widget-item-content">
-                    <span className="widget-item-name">Login</span>
-                    <span className="widget-item-desc">
-                      Switch account ({currentUser?.name?.split(' ')[0]})
-                    </span>
-                  </div>
-                  <span className="widget-arrow-icon">→</span>
-                </button>
-
-                {/* Section 2: Log out Button */}
-                <button 
-                  type="button" 
-                  className="widget-section-btn btn-logout"
-                  onClick={() => {
-                    setIsWidgetOpen(false);
-                    handleLogout();
-                  }}
-                >
-                  <div className="widget-icon-pill logout">🚪</div>
-                  <div className="widget-item-content">
-                    <span className="widget-item-name">Log out</span>
-                    <span className="widget-item-desc">
-                      Stamp exit time & end session
-                    </span>
-                  </div>
-                  <span className="widget-arrow-icon">→</span>
-                </button>
-
-                {/* Section 3: MUM Button */}
-                <button 
-                  type="button" 
-                  className="widget-section-btn btn-mum"
-                  onClick={() => {
-                    setIsWidgetOpen(false);
-                    setShowMumModal(true);
-                  }}
-                >
-                  <div className="widget-icon-pill mum">🏛️</div>
-                  <div className="widget-item-content">
-                    <span className="widget-item-name">MUM</span>
-                    <span className="widget-item-desc">Monthly Unit Monitoring & Minutes</span>
-                  </div>
-                  <span className="widget-arrow-icon">→</span>
-                </button>
-
-                {/* Section 4: Create Task Button */}
-                <button 
-                  type="button" 
-                  className="widget-section-btn btn-createtask"
-                  onClick={() => {
-                    setIsWidgetOpen(false);
-                    if (!assignTargetUserId && usersDb.length > 0) {
-                      const fallbackAuditor = usersDb.find(u => u.role === 'USER') || usersDb[0];
-                      setAssignTargetUserId(fallbackAuditor.id);
-                    }
-                    setShowAssignModal(true);
-                  }}
-                >
-                  <div className="widget-icon-pill createtask">📋</div>
-                  <div className="widget-item-content">
-                    <span className="widget-item-name">Create Task</span>
-                    <span className="widget-item-desc">Dispatch audit task & instructions</span>
-                  </div>
-                  <span className="widget-arrow-icon">→</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Floating Action Trigger Button (Right Bottom Corner) */}
-          <button 
-            type="button"
-            className={`corner-widget-fab ${isWidgetOpen ? 'open' : ''}`}
-            onClick={() => setIsWidgetOpen(!isWidgetOpen)}
-            title="Quick Operations Widget"
-            aria-label="Toggle Quick Operations Widget"
-          >
-            <div className="fab-icon-wrapper">
-              {isWidgetOpen ? (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              ) : (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                </svg>
-              )}
-            </div>
-            {!isWidgetOpen && <span className="fab-badge-chip">4</span>}
-          </button>
-        </div>
-      )}
 
 
       {/* ── Modal: PWA Web App Installation Guide ── */}

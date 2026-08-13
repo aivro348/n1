@@ -1,9 +1,47 @@
-DirectoryIndex index.html
+# ==============================================================================
+# CA Buddy Enterprise Audit System - Apache .htaccess Configuration
+# Full Support for Single Page App (SPA) + Native PHP API
+# ==============================================================================
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # 1. Direct API Requests to PHP Backend API
+  RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+  RewriteRule ^api$ api/index.php [QSA,L]
+
+  # 2. Prevent direct access to backend data or sql files
+  RewriteRule ^api/db\.json$ - [F,L]
+  RewriteRule \.(sql|env|log)$ - [F,L]
+
+  # 3. If file or directory physically exists on server, serve it directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 4. Fallback for React Single Page Application (SPA) client-side routes
   RewriteRule ^ index.html [L]
 </IfModule>
+
+# MIME Type Corrections for Modern Browsers & PWAs
+<IfModule mod_mime.c>
+  AddType application/javascript js mjs
+  AddType text/css css
+  AddType application/json json
+  AddType image/svg+xml svg svgz
+  AddType image/png png
+  AddType image/jpeg jpg jpeg
+</IfModule>
+
+# Enable Browser Caching for Production Assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# Prevent directory listings
+Options -Indexes
