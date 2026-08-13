@@ -9,11 +9,11 @@ export default defineConfig({
     emptyOutDir: false
   },
   server: {
-    port: 5173,
+    port: 2020,
     proxy: {
       // During local dev, proxy /api requests to the PHP dev server
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5001',
         changeOrigin: true,
         secure: false
       }

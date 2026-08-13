@@ -203,7 +203,17 @@ CREATE TABLE `tasks` (
 -- ==============================================================================
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `role_title`, `unit`, `student_reg_no`, `phone`, `sub_unit`, `managed_by`) VALUES
-('usr-admin-1', 'System Administrator', 'cabuddy@gmail.com', '12345678', 'SUPER_ADMIN', 'Super Administrator', 'All Enterprise Units', 'FCA001', '+91 99999 99999', 'Central Administration Desk', NULL)
+('usr-admin-1', 'System Administrator', 'admin1', 'admin1', 'SUPER_ADMIN', 'Super Administrator', 'All Enterprise Units', 'FCA001', '+91 99999 99999', 'Central Administration Desk', NULL),
+('usr-user-1', 'User One', 'user1', '123', 'USER', 'Field Auditor', 'Procurement [Marketing Department]', 'SRO0000001', '+91 91234 00001', 'Marketing Procurement Cell', 'usr-admin-1'),
+('usr-user-2', 'User Two', 'user2', '123', 'USER', 'Field Auditor', 'Warehousing [Marketing Department]', 'SRO0000002', '+91 91234 00002', 'Warehousing Cold Storage', 'usr-admin-1'),
+('usr-user-3', 'User Three', 'user3', '123', 'USER', 'Field Auditor', 'Auctions [Marketing Department]', 'SRO0000003', '+91 91234 00003', 'Counter No. 4 Daily Token Drawer', 'usr-admin-1'),
+('usr-user-4', 'User Four', 'user4', '123', 'USER', 'Field Auditor', 'Kalyanakatta & Kalyanavedika [Tirumala]', 'SRO0000004', '+91 91234 00004', 'Kalyanakatta Hall No. 3', 'usr-admin-1'),
+('usr-user-5', 'User Five', 'user5', '123', 'USER', 'Field Auditor', 'Annaprasadam Trust and Canteens TML & TPT', 'SRO0000005', '+91 91234 00005', 'Canteen Supervision Desk No. 2', 'usr-admin-1'),
+('usr-user-6', 'User Six', 'user6', '123', 'USER', 'Field Auditor', 'Reception, TML including Marriage halls', 'SRO0000006', '+91 91234 00006', 'Marriage Halls Admin', 'usr-admin-1'),
+('usr-user-7', 'User Seven', 'user7', '123', 'USER', 'Field Auditor', 'Sri Padmavathi Ammavari Temple, Tiruchanoor (Sri PAT)', 'SRO0000007', '+91 91234 00007', 'Temple Collections', 'usr-admin-1'),
+('usr-user-8', 'User Eight', 'user8', '123', 'USER', 'Field Auditor', 'Donor cell along with Concurrent audit on donation of all allied trusts and Srivani Trust Receipts [Tirumala]', 'SRO0000008', '+91 91234 00008', 'Srivani Trust Donation Desk', 'usr-admin-1'),
+('usr-user-9', 'User Nine', 'user9', '123', 'USER', 'Field Auditor', 'Procurement [Marketing Department]', 'SRO0000009', '+91 91234 00009', 'Marketing Procurement Cell', 'usr-admin-1'),
+('usr-user-10', 'User Ten', 'user10', '123', 'USER', 'Field Auditor', 'Warehousing [Marketing Department]', 'SRO0000010', '+91 91234 00010', 'Warehousing Cold Storage', 'usr-admin-1')
 ON DUPLICATE KEY UPDATE `password`=VALUES(`password`), `role`=VALUES(`role`), `name`=VALUES(`name`);
 
 SET FOREIGN_KEY_CHECKS = 1;

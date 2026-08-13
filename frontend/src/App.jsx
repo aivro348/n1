@@ -67,9 +67,9 @@ export default function App() {
   // ── Dashboard Page View State ('hub' | 'duty_entry' | 'shift_logout' | 'mom_page' | 'task_page') ──
   const [dashboardView, setDashboardView] = useState('hub');
 
-  // Sign In form inputs (Master Admin cabuddy@gmail.com / 12345678)
-  const [loginEmail, setLoginEmail] = useState('cabuddy@gmail.com');
-  const [loginPassword, setLoginPassword] = useState('12345678');
+  // Sign In form inputs (Master Admin admin1 / admin1)
+  const [loginEmail, setLoginEmail] = useState('admin1');
+  const [loginPassword, setLoginPassword] = useState('admin1');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -338,14 +338,14 @@ export default function App() {
 
   // Master Admin Role Quick Selector
   const handleSelectDemoRole = (roleKey) => {
-    setLoginEmail('cabuddy@gmail.com');
-    setLoginPassword('12345678');
+    setLoginEmail('admin1');
+    setLoginPassword('admin1');
   };
 
   // Instant 1-Click Login from Quick Login Widget / Modal
   const handleQuickLoginRole = async (roleKey) => {
-    setLoginEmail('cabuddy@gmail.com');
-    setLoginPassword('12345678');
+    setLoginEmail('admin1');
+    setLoginPassword('admin1');
     setShowQuickLoginModal(false);
 
     try {
@@ -353,7 +353,7 @@ export default function App() {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'cabuddy@gmail.com', password: '12345678', location })
+        body: JSON.stringify({ email: 'admin1', password: 'admin1', location })
       });
       const data = await res.json();
 
