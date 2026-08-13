@@ -1,9 +1,7 @@
 -- ==============================================================================
 -- CA Buddy Enterprise Audit System - Clean Production Database Schema
--- Database Target: StackCP / cPanel MySQL
+-- Compatible with: Hostinger, cPanel, StackCP, Localhost MySQL (5.7+ / 8.0+)
 -- ==============================================================================
-
-USE `newversion1-353034319494`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
